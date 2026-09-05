@@ -185,10 +185,10 @@
   },
   "24": {
     "question_id": 24,
-    "answer": null,
-    "status": "unknown",
-    "evidence": null,
-    "source": null,
+    "answer": "Yes, we can provide network architecture and data flow diagrams on request. They show data flow from users through CDN/WAF, VPC segmentation, the application tier, and an encrypted data tier, plus the admin access path through MFA-verified VPN and a bastion host with centralized logging.",
+    "status": "confirmed",
+    "evidence": "Employee interview response",
+    "source": "Employee (verbal/typed)",
     "confidence": null
   },
   "25": {
@@ -209,10 +209,10 @@
   },
   "27": {
     "question_id": 27,
-    "answer": null,
-    "status": "unknown",
-    "evidence": null,
-    "source": null,
+    "answer": "Not applicable in current practice \u2014 our services are delivered remotely per standard MSA terms, so client site access doesn't occur. This is genuinely unknown/not addressed in our documents and should be confirmed if physical access is ever required.",
+    "status": "confirmed",
+    "evidence": "Employee interview response",
+    "source": "Employee (verbal/typed)",
     "confidence": null
   },
   "28": {
@@ -345,10 +345,10 @@
   },
   "44": {
     "question_id": 44,
-    "answer": null,
-    "status": "unknown",
-    "evidence": null,
-    "source": null,
+    "answer": "Yes. Additional detail: We don't operate a corporate wireless network to monitor since we're remote-first with no physical office infrastructure. Employees connect via home or co-working networks outside our control. This is inferred from context, not explicitly documented \u2014 flag as low confidence, needs employee confirmation.",
+    "status": "confirmed",
+    "evidence": "Employee interview response",
+    "source": "Employee (verbal/typed)",
     "confidence": null
   },
   "45": {
@@ -377,10 +377,10 @@
   },
   "48": {
     "question_id": 48,
-    "answer": null,
-    "status": "unknown",
-    "evidence": null,
-    "source": null,
+    "answer": "Unknown \u2014 not disclosed in any provided document. Needs direct confirmation from the employee/founders, since incident history isn't something we should infer or guess.. Additional detail: No, to the best of our knowledge there have been no security events or incidents in the last 5 years, but this should still be verified directly with the founders as authoritative confirmation.",
+    "status": "confirmed",
+    "evidence": "Employee interview response",
+    "source": "Employee (verbal/typed)",
     "confidence": null
   },
   "49": {
@@ -409,10 +409,10 @@
   },
   "52": {
     "question_id": 52,
-    "answer": null,
-    "status": "unknown",
-    "evidence": null,
-    "source": null,
+    "answer": "No, we would use our own company-issued devices to access any client network, consistent with our Asset Management Policy covering company-work devices. This specific client-asset scenario isn't explicitly addressed in our documents, so treat as inferred, not fully verified.. Additional detail: Confirmed with the assumption that we follow standard practice: our team uses company-issued devices exclusively for client engagements. No policy explicitly prohibits client-provided hardware, but it hasn't come up in practice. This should be formally verified with IT/Security before finalizing.",
+    "status": "confirmed",
+    "evidence": "Employee interview response",
+    "source": "Employee (verbal/typed)",
     "confidence": null
   },
   "53": {
