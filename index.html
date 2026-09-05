@@ -46,6 +46,9 @@
   .b.bot.stack{border-bottom-left-radius:20px;}
   .b.me.stack{border-bottom-right-radius:20px;}
 
+  .b.bot.ev{background:#F8F7FC;border:1px solid var(--line);border-left:3px solid #D6C9FA;
+    border-radius:6px 18px 18px 6px;font-size:13.5px;line-height:1.5;color:#5B5670;}
+
   .typing{align-self:flex-start;background:var(--bot);border-radius:20px 20px 20px 6px;padding:13px 16px;
     display:flex;gap:4px;margin-top:12px;}
   .typing i{width:7px;height:7px;border-radius:50%;background:#A9A4B8;animation:blink 1.3s infinite;}
@@ -106,6 +109,14 @@ let lastQuestion = '';        // the questionnaire item we're currently on
 let pendingFollowup = null;   // multi-step follow-up chain in progress
 let awaitingConfirm = null;   // question we just read back to the user for confirmation
 
+function isSmallTalk(t){
+  const s = t.toLowerCase().trim();
+  return /^(hi|hey|hello|yo|sup|good (morning|afternoon|evening))\b/.test(s)
+    || /^(thanks|thank you|thx|ty|cheers|appreciate)/.test(s)
+    || /^(bye|goodbye|see ya|later|that'?s all|nothing else)/.test(s)
+    || /(who are you|what are you|are you a (bot|human|robot|person)|are you real|your name)/.test(s)
+    || /(what can you (do|answer|help)|what do you know|can you help)/.test(s);
+}
 function wantsSummary(t){
   return /(^|\b)(report|questionnaire|summary|summarise|summarize|recap|what have you|everything so far)(\b|$)/i.test(t);
 }
@@ -119,6 +130,7 @@ async function loadData(){
   }catch(e){
     QUESTIONS = QUESTIONS_EMBEDDED; PROFILE = PROFILE_EMBEDDED;
   }
+  buildIndex();
 }
 const ready = loadData();
 
@@ -128,7 +140,8 @@ function esc(s){
 }
 function bubble(text, who){
   const div = document.createElement('div');
-  div.className = 'b ' + who;
+  const isEvidence = who === 'bot' && /^[\u201c—]/.test(String(text).trim());
+  div.className = 'b ' + who + (isEvidence ? ' ev' : '');
   div.innerHTML = esc(text).replace(/\n/g,'<br>');
   thread.appendChild(div);
   thread.scrollTop = thread.scrollHeight;
@@ -173,14 +186,40 @@ function short(text){
   return a;
 }
 
+/* the quote and file an answer came from */
+function evidenceLine(p){
+  const src = String(p.source || '').trim();
+  let q = String(p.evidence || '').trim().replace(/\s+/g,' ');
+  if(/^employee/i.test(src)) return null;          // came from a person, not a document
+  if(!src && !q) return null;
+  if(q.length > 170) q = q.slice(0,165).trim().replace(/[,;:]$/,'') + '…';
+  if(q && src) return '\u201c' + q + '\u201d\n— ' + src;
+  return q ? '\u201c' + q + '\u201d' : '— ' + src;
+}
+
 /* ---------------- memory ---------------- */
-function remember(question, answer){
+function remember(question, answer, from){
+  from = from || 'user';
   const hit = memory.find(m => m.question === question);
-  if(hit) hit.answer = answer; else memory.push({question, answer});
+  if(hit){ hit.answer = answer; hit.from = from; }
+  else memory.push({question, answer, from});
 }
 function recall(question){
-  const hit = memory.find(m => m.question === question);
-  return hit ? hit.answer : null;
+  return memory.find(m => m.question === question) || null;
+}
+/* did they already tell us this, in different words? */
+function recallLoose(text){
+  const a = new Set(words(text));
+  let best = null, bestScore = 0;
+  memory.forEach(m => {
+    const b = words(m.question);
+    if(!b.length) return;
+    let hits = 0;
+    b.forEach(w => { if(a.has(w)) hits++; });
+    const sc = hits / b.length;
+    if(sc > bestScore){ bestScore = sc; best = m; }
+  });
+  return bestScore >= 0.6 ? best : null;
 }
 
 /* ---------------- matching ---------------- */
@@ -199,19 +238,106 @@ function expand(t){
   return s;
 }
 const STOP = new Set(['do','you','your','the','a','an','is','are','of','to','for','and','or','have','has','will',
-  'be','if','so','any','on','in','with','we','our','conduct','provide','perform','require','ensure','describe']);
+  'be','if','so','any','on','in','with','we','our','us','it','that','this','they','them','there','can','does','did',
+  'what','how','who','where','when','which','tell','me','about','know','like','would','get','got','been','was','were',
+  'conduct','provide','perform','require','ensure','describe','organization','organizations','company','companys']);
 function words(s){
   return expand(s).replace(/[^a-z0-9 ]/g,' ').split(' ').filter(w=>w.length>2 && !STOP.has(w));
 }
-function findMatch(text){
-  const a = new Set(words(text));
-  let best=null, score=0;
-  QUESTIONS.forEach(q=>{
-    let hits=0;
-    words(q.question).forEach(w=>{ if(a.has(w)) hits++; });
-    if(hits>score){ score=hits; best=q; }
+
+/* everyday phrasing -> the vocabulary the questionnaire actually uses */
+const ALIASES = [
+  [/\b(mfa|2fa|two[- ]?factor|multi[- ]?factor|otp|authenticator|sso)\b/, 'multi factor authentication mfa otp replay resistant login'],
+  [/\b(stored?|storage|keeps?|kept|hold|holds|resides?|located|location|hosting|hosted|host|data ?cent(er|re)|aws|amazon|cloud|region|residency|offshore|onshore|premises|on site|onsite|third party)\b/, 'stored data center third party site cloud hosted location'],
+  [/\b(encrypt\w*|aes|tls|ssl|cipher|at rest|in transit)\b/, 'encryption rest transit cryptography keys'],
+  [/(\bbackup\w*|\bback(s|ed|ing)?[ -]?ups?\b|\bback\b[\w ]{0,14}\bup\b|\brestore\w*|\bsnapshot\w*|\brto\b|\brpo\b|\bdisaster|\bcontinuity|\boutage|\bdown ?time)/, 'backups disaster recovery process restore'],
+  [/\b(pen ?test\w*|penetration|vulnerab\w*|scan\w*|patch\w*|cve|exploit)\b/, 'vulnerability penetration testing scanning patch remediation'],
+  [/\b(offboard\w*|terminat\w*|leaves?|leaving|left|quits?|quitting|fired|resign\w*|departure|exits?)\b/, 'offboarding termination revocation'],
+  [/\b(who has access|access|least privilege|admin\w*|privileg\w*|rbac|permission\w*|role[- ]based|authoriz\w*|production|server\w*|touch|log ?in|sign ?in)\b/, 'identity access controls role based privileged'],
+  [/\b(incident\w*|breach\w*|hack\w*|ransom\w*|attack\w*|compromis\w*|sev|emergency)\b/, 'incident response plan'],
+  [/\b(train\w*|awareness|phish\w*)\b/, 'security awareness training phishing employees'],
+  [/\b(vendor\w*|third[- ]part\w*|subcontractor\w*|supplier\w*|partner\w*)\b/, 'vendor third party subcontractor risk management'],
+  [/\b(soc ?2|soc2|iso ?27001|certif\w*|attestation)\b/, 'soc certification attestation'],
+  [/\b(gdpr|privacy|pii|personal data|dpa|ccpa|subject request)\b/, 'privacy personal data protection dpa'],
+  [/\b(log\w*|monitor\w*|siem|alert\w*|audit trail)\b/, 'logging monitoring events audit logs'],
+  [/\b(password\w*|credential\w*|secret\w*|rotation|key management)\b/, 'password secrets credentials authentication policy'],
+  [/\b(laptop\w*|device\w*|endpoint\w*|byod|antivirus|malware|workstation\w*|mobile)\b/, 'endpoint devices malware assets encryption'],
+  [/\b(background check\w*|screen\w*|hiring|hire[sd]?\b|reference check\w*)\b/, 'background screening'],
+  [/\b(wifi|wi-fi|wireless|network\w*|vpn|firewall\w*|segmentation|router)\b/, 'network wireless vpn firewall segmentation'],
+  [/\b(retention|retain\w*|delet\w*|disposal|destroy\w*|erasure|wipe)\b/, 'data retention deletion disposal destruction'],
+  [/\b(insurance|liability|coverage)\b/, 'insurance liability cyber coverage'],
+  [/\b(polic\w*|documented|written down|procedure\w*|standard\w*)\b/, 'policies documented procedures standards'],
+  [/\b(uptime|availab\w*|sla|redundan\w*|failover)\b/, 'availability uptime redundancy resilience'],
+  [/\b(code|coding|developer\w*|development|sdlc|deploy\w*|ci ?\/? ?cd|repo\w*|github|change\w*)\b/, 'secure development code review change management'],
+  [/\b(risk\w*|assessment\w*|register)\b/, 'risk assessment management register'],
+  [/\b(asset\w*|inventor\w*)\b/, 'asset inventory management'],
+  [/\b(remote|work from home|office|physical)\b/, 'remote physical office facilities'],
+  [/\b(ai|machine learning|model\w*|llm)\b/, 'ai model platform']
+];
+function enrich(text){
+  const low = ' ' + text.toLowerCase() + ' ';
+  let out = text;
+  ALIASES.forEach(([re, add]) => { if(re.test(low)) out += ' ' + add; });
+  return out;
+}
+
+/* idf so rare, meaningful words outweigh filler */
+let IDF = {};
+function buildIndex(){
+  const df = {};
+  QUESTIONS.forEach(q => {
+    q._tok = Array.from(new Set(words(q.question + ' ' + (q.topic || ''))));
+    q._text = (q.question + ' ' + (q.topic || '')).toLowerCase().replace(/[^a-z0-9]+/g,' ');
+    q._tok.forEach(w => df[w] = (df[w] || 0) + 1);
   });
-  return score>=1 ? best : null;
+  const N = QUESTIONS.length || 1;
+  Object.keys(df).forEach(w => IDF[w] = Math.log(1 + N / df[w]));
+}
+
+function rank(text){
+  const q = new Set(words(enrich(text)));
+  if(!q.size) return [];
+  const plain = text.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().split(' ').filter(Boolean);
+  const pairs = [];
+  for(let i = 0; i < plain.length - 1; i++){
+    if(!(STOP.has(plain[i]) && STOP.has(plain[i+1]))) pairs.push(plain[i] + ' ' + plain[i+1]);
+  }
+  const out = [];
+  QUESTIONS.forEach(item => {
+    let score = 0, hits = 0;
+    (item._tok || []).forEach(w => { if(q.has(w)){ score += (IDF[w] || 1); hits++; } });
+    if(!hits) return;
+    score = score / Math.sqrt((item._tok || []).length || 1);
+    pairs.forEach(bg => { if((item._text || '').includes(' ' + bg + ' ')) score += 1.5; });  // exact phrase wins
+    out.push({ q: item, score });
+  });
+  out.sort((a,b) => b.score - a.score);
+  return out;
+}
+const STRONG = 2.4;   // confident enough to answer
+const MAYBE  = 1.2;   // worth asking "did you mean…"
+function findMatch(text){
+  const r = rank(text);
+  return (r.length && r[0].score >= STRONG) ? r[0].q : null;
+}
+
+/* short or pronoun-y messages inherit the topic we were just on */
+let topicContext = '';
+function needsContext(t){
+  const low = ' ' + t.toLowerCase().trim() + ' ';
+  if(/\b(it|that|this|they|them|those|these|there|one)\b/.test(low)) return true;
+  if(/^\s*(and|also|what about|how about|ok|okay|then)\b/i.test(t)) return true;
+  return words(t).length <= 1;
+}
+
+/* a bare topic word ("MFA", "backups") is a question, not an answer */
+const ANSWERY = /^(yes|yeah|yep|yup|no|nope|nah|sure|correct|true|false|none|n\/a|na|all|both|daily|weekly|monthly|quarterly|annually|yearly|hourly|automated|manual|always|never|sometimes|\d+)\b/i;
+function looksLikeTopic(text){
+  const w = words(text);
+  if(!w.length || w.length > 4) return false;
+  if(ANSWERY.test(text.trim())) return false;
+  const r = rank(text);
+  return r.length > 0 && r[0].score >= MAYBE;
 }
 
 /* ---------------- follow-up chains ---------------- */
@@ -253,13 +379,40 @@ function isQuestion(t){
 }
 
 /* ---------------- answering ---------------- */
-async function answer(text){
-  const t = text.toLowerCase();
+async function answer(raw){
+  const t = raw.toLowerCase();
 
+  /* small talk */
   if(/^(hi|hey|hello|yo|sup|good morning|good afternoon|good evening)\b/.test(t)){
     await say('Hi! Ask me anything about our security — MFA, backups, encryption, access, incidents.');
     return;
   }
+  if(/^(thanks|thank you|thx|ty|cheers|appreciate)/.test(t)){
+    await say('Anytime.');
+    return;
+  }
+  if(/^(bye|goodbye|see ya|later|that\'s all|thats all|nothing else)/.test(t)){
+    await say('Take care — come back anytime.');
+    return;
+  }
+  if(/(who are you|what are you|are you a (bot|human|robot|person)|are you real|your name)/.test(t)){
+    await say('I\'m IRIS — I keep track of how we handle security, and answer questions about it.');
+    return;
+  }
+  if(/(what can you (do|answer|help)|what do you know|topics|help me|can you help)/.test(t)){
+    await say('Anything on our security posture — access and MFA, data storage, encryption, backups and recovery, vulnerability testing, incidents, vendors, training, policies.');
+    return;
+  }
+  if(/(are you sure|how do you know|says who|source|proof|where did you get)/.test(t)){
+    await say('Everything I tell you is either documented internally or confirmed by our team.',
+              'If I\'m not sure, I say so rather than guess.');
+    return;
+  }
+
+  /* a fragment with no topic of its own inherits the one we were on */
+  const own = rank(raw);
+  const text = ((!own.length || own[0].score < MAYBE) && topicContext && needsContext(raw))
+    ? topicContext + ' ' + raw : raw;
 
   if(wantsSummary(t)){
     if(memory.length === 0){
@@ -273,11 +426,12 @@ async function answer(text){
 
   /* conflicting sources — DR / cross-region backups */
   if(t.includes('disaster') || (t.includes('backup') && /(region|replicat|recover|tested)/.test(t))){
-    const m = findMatch(text);
-    lastQuestion = m ? m.question : 'Disaster recovery and backups';
+    const dr = QUESTIONS.find(q => /disaster recovery and backups/i.test(q.question));
+    lastQuestion = dr ? dr.question : 'Disaster recovery and backups';
+    topicContext = lastQuestion;
     await say(
       'I have conflicting information on that.',
-      'One record says there are no second-region backups and no restore test. Another says cross-region replication is in place.',
+      'The BC/DR policy says there are no second-region backups and no restore test. The SOC 2 report says cross-region replication is in place.',
       'Which one is right?');
     return;
   }
@@ -294,31 +448,66 @@ async function answer(text){
 
   awaitingConfirm = null;
 
-  /* documents first */
-  const match = findMatch(text);
+  /* what we know first */
+  const ranked = rank(text);
+  const match = (ranked.length && ranked[0].score >= STRONG) ? ranked[0].q : null;
+
   if(match){
     lastQuestion = match.question;
+    topicContext = match.question;
 
     const known = recall(match.question);
-    if(known){
+    if(known && known.from === 'user'){
       awaitingConfirm = match.question;
-      await say(known, 'Still accurate?');
+      await say(known.answer, 'Still accurate?');
       return;
     }
+    if(known){ await say(known.answer); return; }
 
     const p = PROFILE[String(match.id)] || {};
     if((p.status === 'verified' || p.status === 'confirmed') && p.answer){
       const a = short(p.answer);
-      remember(match.question, a);
-      await say(a);
+      remember(match.question, a, 'doc');
+      await say(a, evidenceLine(p));
       return;
     }
     await say('I don\'t have a confirmed answer on that yet.', 'Can you tell me?');
     return;
   }
 
-  lastQuestion = text;
+  /* they may have told us this earlier, phrased differently */
+  const earlier = recallLoose(text);
+  if(earlier){
+    lastQuestion = earlier.question;
+    topicContext = earlier.question;
+    if(earlier.from === 'user'){
+      awaitingConfirm = earlier.question;
+      await say(earlier.answer, 'Still accurate?');
+    } else {
+      await say(earlier.answer);
+    }
+    return;
+  }
+
+  /* close, but not sure enough to answer — check what they meant */
+  if(ranked.length && ranked[0].score >= MAYBE){
+    topicContext = ranked[0].q.question;
+    const a = trim(ranked[0].q.question);
+    const b = (ranked[1] && ranked[1].score >= MAYBE && ranked[1].score > ranked[0].score * 0.8)
+      ? trim(ranked[1].q.question) : null;
+    await say('Just to be sure I answer the right thing —', b ? ('do you mean:\n\n' + a + '\n\nor\n\n' + b) : ('do you mean ' + a));
+    return;
+  }
+
+  lastQuestion = raw;
+  topicContext = raw;
   await say('I don\'t have a confirmed answer on that yet.', 'Can you tell me?');
+}
+
+/* shorten a questionnaire item for a clarifying question */
+function trim(q){
+  q = String(q||'').trim().split(/(?<=\?)\s/)[0];
+  return q.length > 95 ? q.slice(0,92).trim().replace(/[,;:]$/,'') + '…' : q;
 }
 
 /* ---------------- input ---------------- */
@@ -340,7 +529,8 @@ async function send(){
       return;
     }
     const summary = c.chain.done(c.collected);
-    remember(c.question, summary.replace(/^Got it — /,''));
+    const stored = summary.replace(/^Got it — /,'');
+    remember(c.question, stored.charAt(0).toUpperCase() + stored.slice(1));
     pendingFollowup = null;
     await say(summary);
     return;
@@ -359,15 +549,12 @@ async function send(){
     return;
   }
 
+  if(isSmallTalk(text)){ await answer(text); return; }
   if(wantsSummary(text)){ await answer(text); return; }
   if(isQuestion(text)){ await answer(text); return; }
+  if(!lastQuestion || looksLikeTopic(text)){ await answer(text); return; }
 
   /* it's an answer to whatever we last asked about */
-  if(!lastQuestion){
-    await say('What would you like to know?');
-    return;
-  }
-
   const chain = chainFor(lastQuestion);
   if(chain && vague(text)){
     pendingFollowup = { chain, question: lastQuestion, step: 0, collected: {} };
@@ -376,6 +563,7 @@ async function send(){
   }
 
   remember(lastQuestion, text);
+  topicContext = lastQuestion;
   await say('Got it, thanks.');
 }
 
