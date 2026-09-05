@@ -1,4 +1,4 @@
-# IRIS — Investigative Risk & Information System
+# IRIS - Investigative Risk & Information System
 
 **An AI Security Analyst that answers enterprise security questionnaires from a company's own documents — and asks a human when the documents don't know.**
 
