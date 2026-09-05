@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IRIS</title>
+<style>
+  :root{
+    --bg:#0A0A23;
+    --panel:#12132E;
+    --panel-2:#171933;
+    --border:#272A4D;
+    --text:#E9EAF6;
+    --text-soft:#9195BF;
+    --teal:#2FD4A5;
+    --teal-bg:rgba(47,212,165,.12);
+    --blue:#4C8DFF;
+    --blue-bg:rgba(76,141,255,.12);
+    --amber:#F5A623;
+    --amber-bg:rgba(245,166,35,.12);
+    --sans:-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    --mono:'SFMono-Regular', Menlo, Consolas, monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;background:var(--bg);color:var(--text);font-family:var(--sans);}
+  .app{max-width:680px;margin:0 auto;height:100%;position:relative;background:var(--bg);overflow:hidden;}
+
+  /* landing */
+  .landing{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:32px;text-align:center;transition:opacity .3s ease, transform .3s ease;
+    background:
+      radial-gradient(ellipse 700px 420px at 50% 38%, rgba(47,212,165,.08), transparent 70%),
+      radial-gradient(ellipse 900px 500px at 50% 100%, rgba(76,141,255,.06), transparent 70%),
+      var(--bg);}
+  .landing.hidden{opacity:0;transform:translateY(-14px);pointer-events:none;}
+
+  .live-badge{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--text-soft);
+    border:1px solid var(--border);background:var(--panel);padding:6px 14px;border-radius:20px;margin-bottom:22px;}
+  .live-badge .d{width:6px;height:6px;border-radius:50%;background:var(--teal);
+    box-shadow:0 0 0 0 rgba(47,212,165,.6);animation:pulse 2s infinite;}
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(47,212,165,.55);}
+    70%{box-shadow:0 0 0 7px rgba(47,212,165,0);}
+    100%{box-shadow:0 0 0 0 rgba(47,212,165,0);}
+  }
+
+  .landing h1{font-size:44px;font-weight:800;margin:0 0 8px;letter-spacing:.01em;
+    background:linear-gradient(135deg, #ffffff 30%, var(--teal) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .landing .acronym{font-size:13.5px;color:var(--text-soft);margin-bottom:32px;}
+
+  .ask-box{width:100%;max-width:500px;display:flex;border:1px solid var(--border);background:var(--panel);
+    border-radius:10px;margin-bottom:20px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.35);}
+  .ask-box input{flex:1;border:none;padding:15px 18px;font-size:14.5px;font-family:var(--sans);
+    background:transparent;color:var(--text);}
+  .ask-box input::placeholder{color:var(--text-soft);}
+  .ask-box input:focus{outline:none;}
+  .ask-box button{border:none;background:var(--teal);color:#04241a;font-weight:700;padding:0 22px;
+    font-size:13.5px;cursor:pointer;box-shadow:0 0 24px rgba(47,212,165,.35);}
+  .ask-box button:hover{opacity:.9;}
+
+  .starters{display:flex;flex-direction:column;gap:9px;max-width:440px;width:100%;}
+  .starter{border:1px solid var(--border);padding:11px 16px;border-radius:10px;font-size:13px;text-align:left;
+    color:var(--text-soft);cursor:pointer;background:var(--panel);line-height:1.4;}
+  .starter:hover{border-color:var(--teal);color:var(--text);background:var(--panel-2);}
+
+  /* chat */
+  .chatview{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .3s ease;}
+  .chatview.visible{opacity:1;pointer-events:auto;}
+  .header{display:flex;align-items:center;gap:10px;padding:14px 22px;border-bottom:1px solid var(--border);}
+  .mark-sm{width:28px;height:28px;border-radius:8px;background:var(--teal-bg);color:var(--teal);
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;}
+  .header h2{font-size:15px;font-weight:600;margin:0;flex:1;}
+  .report-btn{border:1px solid var(--border);background:var(--panel);color:var(--text-soft);
+    padding:6px 13px;border-radius:8px;font-size:12px;cursor:pointer;font-family:var(--sans);}
+  .report-btn:hover{border-color:var(--teal);color:var(--teal);}
+
+  .report-overlay{position:absolute;inset:0;background:rgba(6,7,20,.6);display:flex;align-items:center;
+    justify-content:center;padding:24px;z-index:30;opacity:0;pointer-events:none;transition:opacity .2s ease;}
+  .report-overlay.open{opacity:1;pointer-events:auto;}
+  .report-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;width:100%;
+    max-width:440px;max-height:80%;display:flex;flex-direction:column;overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,.5);}
+  .report-head{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;
+    border-bottom:1px solid var(--border);}
+  .report-head h3{margin:0;font-size:15px;font-weight:600;}
+  .report-close{background:none;border:none;color:var(--text-soft);font-size:15px;cursor:pointer;}
+  .report-close:hover{color:var(--text);}
+  .report-body{overflow-y:auto;padding:8px 0;}
+  .report-row{display:flex;justify-content:space-between;gap:12px;padding:11px 18px;
+    border-bottom:1px solid var(--panel-2);font-size:12.5px;}
+  .report-row .q{color:var(--text-soft);}
+  .report-empty{padding:24px 18px;color:var(--text-soft);font-size:13px;text-align:center;}
+
+  .thread{flex:1;overflow-y:auto;padding:20px 22px;display:flex;flex-direction:column;gap:12px;}
+  .msg{max-width:88%;font-size:14px;line-height:1.55;}
+  .msg.agent{align-self:flex-start;}
+  .msg.user{align-self:flex-end;}
+  .bubble{padding:10px 14px;border-radius:9px;background:var(--panel);border:1px solid var(--border);}
+  .msg.user .bubble{background:var(--blue-bg);border-color:rgba(76,141,255,.35);}
+  .who-lbl{font-size:11px;color:var(--text-soft);margin-bottom:4px;}
+
+  .cite{display:inline-flex;align-items:center;gap:5px;cursor:pointer;color:var(--teal);font-family:var(--mono);font-size:11.5px;}
+  .conf{background:var(--teal-bg);color:var(--teal);padding:1px 6px;border-radius:20px;font-size:10px;font-weight:600;}
+  .cite-pop{display:none;margin-top:7px;padding:8px 10px;background:var(--teal-bg);border-left:2px solid var(--teal);
+    font-family:var(--mono);font-size:11.5px;color:#bdf3e3;border-radius:0 4px 4px 0;}
+  .cite-pop.open{display:block;}
+
+  .status-pill{display:inline-block;font-size:10.5px;padding:2px 8px;border-radius:20px;margin-top:8px;font-weight:600;}
+  .status-verified{background:var(--teal-bg);color:var(--teal);}
+  .status-confirmed{background:var(--blue-bg);color:var(--blue);}
+  .status-unknown{background:var(--amber-bg);color:var(--amber);}
+  .followup{font-style:italic;color:var(--text-soft);}
+
+  .chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px;}
+  .chip-reply{border:1px solid var(--border);background:var(--panel);color:var(--text);padding:6px 12px;
+    font-size:12.5px;cursor:pointer;border-radius:20px;}
+  .chip-reply:hover{border-color:var(--teal);color:var(--teal);}
+
+  .edit-link{font-size:11px;color:var(--text-soft);cursor:pointer;margin-top:5px;display:inline-block;}
+  .edit-link:hover{color:var(--text);}
+  .edit-input{width:100%;border:1px solid var(--blue);background:var(--panel);color:var(--text);
+    border-radius:6px;padding:7px 10px;font-size:14px;font-family:var(--sans);margin-top:6px;}
+
+  .typing{display:flex;gap:4px;padding:10px 14px;border:1px solid var(--border);border-radius:9px;
+    width:fit-content;background:var(--panel);}
+  .typing span{width:5px;height:5px;border-radius:50%;background:var(--text-soft);animation:blink 1.2s infinite;}
+  .typing span:nth-child(2){animation-delay:.2s;}
+  .typing span:nth-child(3){animation-delay:.4s;}
+  @keyframes blink{0%,80%,100%{opacity:.2;}40%{opacity:1;}}
+
+  .composer{border-top:1px solid var(--border);padding:12px 22px;display:flex;gap:9px;}
+  .composer input{flex:1;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;
+    font-family:var(--sans);background:var(--panel);color:var(--text);}
+  .composer input::placeholder{color:var(--text-soft);}
+  .composer input:focus{outline:1px solid var(--teal);}
+  .composer button{border:none;background:var(--teal);color:#04241a;font-weight:700;padding:0 16px;
+    border-radius:8px;font-size:13px;cursor:pointer;}
+
+  ::-webkit-scrollbar{width:8px;}
+  ::-webkit-scrollbar-thumb{background:#2a2e58;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="landing" id="landing">
+    <div class="live-badge"><span class="d"></span>AI Security Analyst · Active on this review</div>
+    <h1>IRIS</h1>
+    <div class="acronym">Investigative Risk &amp; Information System</div>
+
+    <div class="ask-box">
+      <input id="landingInput" type="text" placeholder="Ask IRIS anything about your security posture…" onkeydown="if(event.key==='Enter')startChat(this.value)">
+      <button onclick="startChat(document.getElementById('landingInput').value)">Ask IRIS</button>
+    </div>
+
+    <div class="starters">
+      <div class="starter" onclick="startChat('Is multi-factor authentication enabled across all employee accounts?')">Is multi-factor authentication enabled across all employee accounts?</div>
+      <div class="starter" onclick="startChat('How often are our production backups performed and verified?')">How often are our production backups performed and verified?</div>
+      <div class="starter" onclick="startChat('Do we run regular vulnerability scans across our infrastructure?')">Do we run regular vulnerability scans across our infrastructure?</div>
+    </div>
+  </div>
+
+  <div class="chatview" id="chatview">
+    <div class="header">
+      <div class="mark-sm">I</div>
+      <h2>IRIS</h2>
+      <button class="report-btn" onclick="generateReport()">Generate report</button>
+    </div>
+    <div class="thread" id="thread"></div>
+    <div class="composer">
+      <input id="composerInput" type="text" placeholder="Type your answer…" onkeydown="if(event.key==='Enter')sendMsg()">
+      <button onclick="sendMsg()">Send</button>
+    </div>
+
+    <div class="report-overlay" id="reportOverlay">
+      <div class="report-card">
+        <div class="report-head">
+          <h3>Security questionnaire — so far</h3>
+          <button class="report-close" onclick="closeReport()">✕</button>
+        </div>
+        <div class="report-body" id="reportBody"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const thread = document.getElementById('thread');
+let msgCounter = 0;
+let profile = [];
+let nudged = false;
+let lastQuestion = '';
+
+function recordAnswer(question, answer, status){
+  const existing = profile.find(p => p.question === question);
+  if(existing){ existing.answer = answer; existing.status = status; }
+  else { profile.push({question, answer, status}); }
+}
+
+function generateReport(){
+  const body = document.getElementById('reportBody');
+  if(profile.length === 0){
+    body.innerHTML = '<div class="report-empty">Nothing recorded yet — ask a question to get started.</div>';
+  } else {
+    body.innerHTML = profile.map(p => {
+      const color = p.status === 'Verified' ? 'var(--teal)' : p.status === 'Confirmed by you' ? 'var(--blue)' : 'var(--amber)';
+      return '<div class="report-row"><span class="q">' + p.question + '<br><b style="color:' + color + ';">' + p.answer + '</b></span>'
+        + '<span style="color:' + color + ';white-space:nowrap;">' + p.status + '</span></div>';
+    }).join('');
+  }
+  document.getElementById('reportOverlay').classList.add('open');
+}
+function closeReport(){ document.getElementById('reportOverlay').classList.remove('open'); }
+
+async function maybeNudge(){
+  if(nudged) return;
+  if(profile.some(p => p.question.toLowerCase().includes('contractor'))) return;
+  nudged = true;
+  await new Promise(r=>setTimeout(r, 600));
+  await addTyping(0);
+  await new Promise(r=>setTimeout(r, 700));
+  removeTyping();
+  await addAgentMsg(
+    'Before we go further — access control has an open gap that carries more weight for this review than what we\'ve covered so far.'
+    + '<div style="margin-top:5px;" class="followup">Want to look at contractor production access next?</div>'
+    + '<div class="chips">'
+    + '<button class="chip-reply" onclick="ask(\'Is contractor access limited to least privilege?\')">Yes, let\'s cover that</button>'
+    + '<button class="chip-reply" onclick="quickReply(\'Not now\')">Not now</button>'
+    + '</div>');
+}
+
+function addAgentMsg(html, delay){
+  return new Promise(resolve=>{
+    setTimeout(()=>{
+      const div = document.createElement('div');
+      div.className = 'msg agent';
+      div.innerHTML = '<div class="who-lbl">IRIS</div><div class="bubble">' + html + '</div>';
+      thread.appendChild(div);
+      thread.scrollTop = thread.scrollHeight;
+      resolve();
+    }, delay || 0);
+  });
+}
+
+function addUserMsg(text){
+  msgCounter++;
+  const id = 'umsg-' + msgCounter;
+  const div = document.createElement('div');
+  div.className = 'msg user';
+  div.id = id;
+  div.innerHTML =
+    '<div class="who-lbl">You</div>' +
+    '<div class="bubble"><span class="text">' + text + '</span>' +
+    '<div><span class="edit-link" onclick="startEdit(\'' + id + '\')">edit</span></div></div>';
+  thread.appendChild(div);
+  thread.scrollTop = thread.scrollHeight;
+  return id;
+}
+
+function startEdit(id){
+  const bubble = document.querySelector('#'+id+' .bubble');
+  const current = bubble.querySelector('.text').textContent;
+  bubble.innerHTML =
+    '<input class="edit-input" value="' + current.replace(/"/g,'&quot;') + '" ' +
+    'onkeydown="if(event.key===\'Enter\')saveEdit(\''+id+'\', this.value)">';
+  bubble.querySelector('input').focus();
+}
+
+async function saveEdit(id, newText){
+  const bubble = document.querySelector('#'+id+' .bubble');
+  bubble.innerHTML =
+    '<span class="text">' + newText + '</span>' +
+    '<div><span class="edit-link" onclick="startEdit(\''+id+'\')">edit</span></div>';
+  await addAgentMsg('Updated — thanks for the correction.<div><span class="status-pill status-confirmed">Confirmed by you</span></div>', 250);
+}
+
+function addTyping(delay){
+  return new Promise(resolve=>{
+    setTimeout(()=>{
+      const div = document.createElement('div');
+      div.className = 'msg agent';
+      div.id = 'typingIndicator';
+      div.innerHTML = '<div class="who-lbl">IRIS</div><div class="typing"><span></span><span></span><span></span></div>';
+      thread.appendChild(div);
+      thread.scrollTop = thread.scrollHeight;
+      resolve();
+    }, delay || 0);
+  });
+}
+function removeTyping(){ const t=document.getElementById('typingIndicator'); if(t) t.remove(); }
+
+function toggleCite(el){ el.nextElementSibling.classList.toggle('open'); }
+
+async function quickReply(text, statusLabel, statusClass){
+  statusLabel = statusLabel || 'Confirmed by you';
+  statusClass = statusClass || 'status-confirmed';
+  addUserMsg(text);
+  await addTyping(200);
+  await new Promise(r=>setTimeout(r, 700));
+  removeTyping();
+  recordAnswer(lastQuestion, text, statusLabel);
+  await addAgentMsg('Got it — recorded.<div><span class="status-pill ' + statusClass + '">' + statusLabel + '</span></div>');
+  await maybeNudge();
+}
+
+let QUESTIONS = [];
+let PROFILE = {};
+let dataLoaded = false;
+
+async function loadRealData(){
+  try {
+    const [qRes, pRes] = await Promise.all([fetch('questions.json'), fetch('security_profile.json')]);
+    QUESTIONS = await qRes.json();
+    PROFILE = await pRes.json();
+    dataLoaded = true;
+  } catch(e) {
+    console.error('Could not load questions.json / security_profile.json — make sure both sit next to this HTML file.', e);
+  }
+}
+loadRealData();
+
+function scoreMatch(input, questionText){
+  const stop = new Set(['do','you','your','the','a','an','is','are','of','to','for','and','or','have','has','will','be','if','so','any','on','in','with','we','our','across']);
+  const clean = s => s.toLowerCase().replace(/[^a-z0-9 ]/g,' ').split(' ').filter(w=>w.length>2 && !stop.has(w));
+  const a = new Set(clean(input));
+  const b = clean(questionText);
+  let hits = 0;
+  b.forEach(w=>{ if(a.has(w)) hits++; });
+  return hits;
+}
+
+function findRealMatch(text){
+  let best=null, bestScore=0;
+  QUESTIONS.forEach(q=>{
+    const s = scoreMatch(text, q.question);
+    if(s>bestScore){ bestScore=s; best=q; }
+  });
+  return bestScore>=2 ? best : null;
+}
+
+async function ask(q){
+  q = (q||'').trim();
+  if(!q) return;
+  addUserMsg(q);
+
+  await addTyping(300);
+  await new Promise(r=>setTimeout(r, 800));
+  removeTyping();
+
+  const lower = q.toLowerCase();
+
+  if(lower.includes('disaster') || (lower.includes('backup') && (lower.includes('region') || lower.includes('replicat') || lower.includes('recover')))){
+    lastQuestion = 'What is the disaster recovery / backup process?';
+    recordAnswer(lastQuestion, 'Conflict flagged — see below', 'Open finding');
+    await addAgentMsg(
+      'Your Disaster Recovery policy and your SOC 2 report contradict each other on this.'
+      + '<div style="margin-top:8px;"><span class="cite" onclick="toggleCite(this)">BC-DR Policy <span class="conf">policy</span></span>'
+      + '<div class="cite-pop">"Does not maintain backups in a second geographic region… no restore or recovery test has yet been performed."</div></div>'
+      + '<div style="margin-top:6px;"><span class="cite" onclick="toggleCite(this)">SOC 2 Report <span class="conf">report</span></span>'
+      + '<div class="cite-pop">"Automated database backup processes with cross-region replication."</div></div>'
+      + '<div><span class="status-pill status-unknown">Conflict — flagged for review</span></div>'
+      + '<div style="margin-top:6px;" class="followup">Which is actually accurate right now?</div>'
+      + '<div class="chips">'
+      + '<button class="chip-reply" onclick="quickReply(\'Policy is correct — no cross-region yet\',\'Confirmed by you\',\'status-confirmed\')">Policy is correct</button>'
+      + '<button class="chip-reply" onclick="quickReply(\'SOC 2 is correct — cross-region is live\',\'Confirmed by you\',\'status-confirmed\')">SOC 2 is correct</button>'
+      + '</div>');
+    return;
+  } else if(dataLoaded && findRealMatch(q) && !lower.includes('contractor') && !lower.includes('production access') && !lower.includes('least privilege')){
+    const match = findRealMatch(q);
+    const p = PROFILE[String(match.id)];
+    lastQuestion = match.question;
+    if(p.status === 'verified'){
+      recordAnswer(lastQuestion, p.answer, 'Verified');
+      await addAgentMsg(
+        (p.answer || 'Documented.')
+        + '<div style="margin-top:8px;"><span class="cite" onclick="toggleCite(this)">' + (p.source||'Source') + ' <span class="conf">verified</span></span>'
+        + '<div class="cite-pop">"' + (p.evidence||'') + '"</div></div>'
+        + '<div><span class="status-pill status-verified">Verified</span></div>');
+    } else if(p.status === 'confirmed'){
+      recordAnswer(lastQuestion, p.answer, 'Confirmed by you');
+      await addAgentMsg(
+        (p.answer || 'Recorded from employee interview.')
+        + '<div class="followup" style="margin-top:6px;">🔁 This required a follow-up question during the interview to get enough detail.</div>'
+        + '<div><span class="status-pill status-confirmed">Confirmed by you</span></div>');
+    } else {
+      recordAnswer(lastQuestion, 'Not yet confirmed', 'Unknown');
+      await addAgentMsg(
+        'This isn\'t documented, and hasn\'t come up in the employee interview yet.'
+        + '<div style="margin-top:6px;" class="followup">Can you tell me directly?</div>'
+        + '<div><span class="status-pill status-unknown">Unknown</span></div>');
+    }
+    await maybeNudge();
+    return;
+  } else if(lower.includes('contractor') || lower.includes('production access') || lower.includes('least privilege')){
+    lastQuestion = 'Is contractor access limited to least privilege?';
+    await addAgentMsg(
+      'Your Access Control Policy requires contractors get access on the basis of business necessity and least privilege — but Access Review Records show a contractor, M. Delgado, holding Admin access flagged by your own reviewer as "not justified."'
+      + '<div style="margin-top:6px;" class="followup">Was that access actually revoked after it was flagged?</div>'
+      + '<div class="chips">'
+      + '<button class="chip-reply" onclick="quickReply(\'Revoked — resolved\',\'Confirmed by you\',\'status-confirmed\')">Revoked — resolved</button>'
+      + '<button class="chip-reply" onclick="quickReply(\'Still open — logged as finding\',\'Open finding\',\'status-unknown\')">Still open</button>'
+      + '</div>');
+  } else {
+    lastQuestion = q;
+    await addAgentMsg(
+      'I don\'t see this covered directly in what\'s been shared.'
+      + '<div style="margin-top:6px;" class="followup">Can you walk me through it?</div>'
+      + '<div><span class="status-pill status-unknown">Unknown</span></div>');
+  }
+}
+
+async function startChat(q){
+  q = (q||'').trim();
+  document.getElementById('landing').classList.add('hidden');
+  document.getElementById('chatview').classList.add('visible');
+  thread.innerHTML = '';
+  profile = [];
+  nudged = false;
+  if(!q) q = 'Is MFA enabled?';
+  await ask(q);
+}
+
+async function sendMsg(){
+  const input = document.getElementById('composerInput');
+  const val = input.value.trim();
+  if(!val) return;
+  input.value = '';
+  addUserMsg(val);
+  await addTyping(200);
+  await new Promise(r=>setTimeout(r, 700));
+  removeTyping();
+  recordAnswer(lastQuestion || val, val, 'Confirmed by you');
+  await addAgentMsg('Got it — recorded.<div><span class="status-pill status-confirmed">Confirmed by you</span></div>');
+  await maybeNudge();
+}
+</script>
+</body>
+</html>
