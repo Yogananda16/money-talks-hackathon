@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IRIS</title>
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --thread:#FAF9FC;
+    --bot:#F0EFF4;
+    --bot-ink:#16141F;
+    --me:linear-gradient(135deg,#8B6BF5,#6B48E4);
+    --me-ink:#FFFFFF;
+    --line:#EBE8F1;
+    --muted:#8E8A9B;
+    --brand:#7B5CF0;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{background:var(--thread);color:var(--bot-ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;}
+
+  .app{max-width:620px;margin:0 auto;height:100%;display:flex;flex-direction:column;
+    background:var(--bg);border-left:1px solid var(--line);border-right:1px solid var(--line);}
+
+  /* header */
+  .head{display:flex;flex-direction:column;align-items:center;gap:5px;padding:14px 16px 12px;
+    border-bottom:1px solid var(--line);background:rgba(255,255,255,.92);backdrop-filter:blur(12px);}
+  .ava{width:40px;height:40px;border-radius:50%;
+    background:radial-gradient(circle at 33% 28%,#FFFFFF 0%,#C9B4FF 38%,#7B5CF0 100%);
+    box-shadow:0 4px 12px rgba(123,92,240,.28);}
+  .name{font-size:14px;font-weight:600;letter-spacing:-.01em;}
+  .sub{font-size:11.5px;color:var(--muted);margin-top:-3px;}
+
+  /* thread */
+  .thread{flex:1;overflow-y:auto;padding:20px 16px 10px;display:flex;flex-direction:column;gap:4px;}
+  .b{max-width:78%;padding:10px 15px;font-size:15px;line-height:1.45;border-radius:20px;
+    animation:pop .22s ease;word-wrap:break-word;}
+  @keyframes pop{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:none;}}
+  .b.bot{align-self:flex-start;background:var(--bot);color:var(--bot-ink);border-bottom-left-radius:6px;}
+  .b.me{align-self:flex-end;background:var(--me);color:var(--me-ink);border-bottom-right-radius:6px;}
+  .b.bot + .b.bot{margin-top:2px;}
+  .b.me + .b.me{margin-top:2px;}
+  .b.bot + .b.me, .b.me + .b.bot{margin-top:12px;}
+  .b.bot.stack{border-bottom-left-radius:20px;}
+  .b.me.stack{border-bottom-right-radius:20px;}
+
+  .typing{align-self:flex-start;background:var(--bot);border-radius:20px 20px 20px 6px;padding:13px 16px;
+    display:flex;gap:4px;margin-top:12px;}
+  .typing i{width:7px;height:7px;border-radius:50%;background:#A9A4B8;animation:blink 1.3s infinite;}
+  .typing i:nth-child(2){animation-delay:.18s;}
+  .typing i:nth-child(3){animation-delay:.36s;}
+  @keyframes blink{0%,80%,100%{opacity:.3;transform:translateY(0);}40%{opacity:1;transform:translateY(-2px);}}
+
+  /* composer */
+  .composer{padding:10px 14px 16px;border-top:1px solid var(--line);background:#fff;}
+  .box{display:flex;align-items:flex-end;gap:8px;border:1px solid var(--line);border-radius:22px;
+    padding:5px 5px 5px 16px;background:#fff;transition:border-color .16s, box-shadow .16s;}
+  .box:focus-within{border-color:#D7CCFB;box-shadow:0 0 0 4px rgba(123,92,240,.09);}
+  .box input{flex:1;border:none;background:transparent;font-size:15px;font-family:var(--sans);
+    color:var(--bot-ink);padding:9px 0;}
+  .box input::placeholder{color:var(--muted);}
+  .box input:focus{outline:none;}
+  .send{width:34px;height:34px;flex:none;border:none;border-radius:50%;cursor:pointer;background:var(--me);
+    color:#fff;display:flex;align-items:center;justify-content:center;transition:opacity .15s, transform .15s;}
+  .send:hover{transform:translateY(-1px);}
+  .send:disabled{opacity:.35;cursor:default;transform:none;}
+  .send svg{width:16px;height:16px;}
+
+  ::-webkit-scrollbar{width:8px;}
+  ::-webkit-scrollbar-thumb{background:#E2DEEC;border-radius:8px;}
+
+  @media (max-width:620px){ .app{border:none;} .b{max-width:84%;} }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="head">
+    <div class="ava"></div>
+    <div class="name">IRIS</div>
+    <div class="sub">Investigative Risk &amp; Information System</div>
+  </div>
+
+  <div class="thread" id="thread"></div>
+
+  <div class="composer">
+    <div class="box">
+      <input id="input" type="text" autocomplete="off" placeholder="Message"
+        onkeydown="if(event.key==='Enter')send()">
+      <button class="send" onclick="send()" aria-label="Send">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+const QUESTIONS_EMBEDDED = [{"id":1,"question":"Does your organization have a formal Information Security Program established?","topic":"Governance"},{"id":2,"question":"Does your organization have a published set of Information Security policies, standards and procedures?","topic":"Governance"},{"id":3,"question":"Does your organization have a public information security policy?","topic":"Governance"},{"id":4,"question":"Does your organization document role descriptions including relevant cybersecurity & data protection responsibilities?","topic":"Governance"},{"id":5,"question":"Is there a procedure in place for overseeing cybersecurity and data protection controls, that includes how issues are escalated to leadership?","topic":"Governance"},{"id":6,"question":"Will you be using any contractors or sub-contractors to complete the engagement with Client XYZ?","topic":"Third-Party Risk Management"},{"id":7,"question":"Do you have a third-party risk management program/policy in place?","topic":"Third-Party Risk Management"},{"id":8,"question":"Please attach your Third-Party Risk Management Policy.","topic":"Third-Party Risk Management"},{"id":9,"question":"Does your third-party risk management program include supply chain protections?","topic":"Third-Party Risk Management"},{"id":10,"question":"Do your vendor and subcontractor agreements include clauses requiring adherence to cybersecurity and data privacy standards, and do these requirements flow down to all applicable subcontractors and suppliers?","topic":"Third-Party Risk Management"},{"id":11,"question":"Do you provide security awareness training at onboarding and at least annually thereafter for all personnel including contractors?","topic":"Security Awareness & Training"},{"id":12,"question":"How frequently are employees trained on policies in your organization?","topic":"Security Awareness & Training"},{"id":13,"question":"Does your organization provide role based security awareness training at least annually?","topic":"Security Awareness & Training"},{"id":14,"question":"Does your organization have privacy controls and or Data Privacy program in place?","topic":"Privacy"},{"id":15,"question":"Will your personnel or your product require access to sensitive data (i.e PII, PI, PHI) to complete the engagement with Regodit?","topic":"Privacy"},{"id":16,"question":"Please provide a copy of your data retention schedule and secure disposal procedures","topic":"Privacy"},{"id":17,"question":"Do you have a privacy policy in place? If so, please provide the attachment or URL.","topic":"Privacy"},{"id":18,"question":"Does your organization ensure privacy requirements are extended to contractors and service providers through contractual agreements, and that roles and responsibilities concerning data privacy are clearly understood and documented?","topic":"Privacy"},{"id":19,"question":"Do you, or any third party you use to deliver services to Client XYZ, store sensitive information outside the United States? If so, where?","topic":"Data Security"},{"id":20,"question":"Do you require data-at-rest encryption for sensitive data?","topic":"Data Security"},{"id":21,"question":"Do you require data-in-transit encryption for sensitive data? If so, please describe the encryption protocols used.","topic":"Data Security"},{"id":22,"question":"Will Regodit data be stored on site, in a data center, or by a third party?","topic":"Data Security"},{"id":23,"question":"Do you have data retention policies and procedures for the secure disposal of information?","topic":"Data Security"},{"id":24,"question":"If providing a product or SaaS platform that will access, store, or process Client XYZ data, are you able to provide applicable data flow diagrams showing how Regodit's data will flow through the tool upon request?","topic":"Data Security"},{"id":25,"question":"Is there a policy in place for physical security requirements for your business?","topic":"Physical Security"},{"id":26,"question":"Do you require physical access to any Client XYZ locations to complete your engagement?","topic":"Physical Security"},{"id":27,"question":"Are you willing to accept and acknowledge the expectations outlined in Client XYZ's Visitor Management document?","topic":"Physical Security"},{"id":28,"question":"Does your organization have procedures in place to track assets that are brought onto Client XYZ sites?","topic":"Physical Security"},{"id":29,"question":"Can you provide your organization's data protection policy, including evidence of physical safeguards for devices used onsite if requested?","topic":"Physical Security"},{"id":30,"question":"Will Client XYZ be using a web application provided by you?","topic":"Web Application Security"},{"id":31,"question":"What is the name of your web application?","topic":"Web Application Security"},{"id":32,"question":"What is the function/purpose of your web application?","topic":"Web Application Security"},{"id":33,"question":"How do you report application security vulnerabilities?","topic":"Web Application Security"},{"id":34,"question":"Does your web application have an SSL/TLS certificate?","topic":"Web Application Security"},{"id":35,"question":"Does your application offer single sign-on (SSO) or are there plans to implement/offer SSO in the near future? If plans to implement in near future, include an implementation date in your justification.","topic":"Web Application Security"},{"id":36,"question":"Do you have policies, procedures or standards in place for secure development practices?","topic":"Secure Coding"},{"id":37,"question":"Do you utilize Secure Coding Principles - (Detailed logging, encrypted credentials, etc.)?","topic":"Secure Coding"},{"id":38,"question":"Are internal vulnerability scans performed?","topic":"Vulnerability Management"},{"id":39,"question":"On what cadence are vulnerability scans performed?","topic":"Vulnerability Management"},{"id":40,"question":"What are the documented remediation timelines for critical and high patches?","topic":"Vulnerability Management"},{"id":41,"question":"What is the process for disaster recovery and backups?","topic":"Business Continuity & Disaster Recovery"},{"id":42,"question":"Please provide a copy of your BC/DR policy for review.","topic":"Business Continuity & Disaster Recovery"},{"id":43,"question":"Do you keep a record of security events?","topic":"Incident Response"},{"id":44,"question":"Do you monitor the security of your wireless networks?","topic":"Incident Response"},{"id":45,"question":"Do you have an incident response plan in place? If yes, describe briefly.","topic":"Incident Response"},{"id":46,"question":"How often is your Incident Response Plan Tested?(Drop Down)","topic":"Incident Response"},{"id":47,"question":"Do you have a policy requiring prompt notice to third parties regarding information security events affecting your organization?","topic":"Incident Response"},{"id":48,"question":"Regardless of materiality, have you had a security event in the last 5 years?","topic":"Incident Response"},{"id":49,"question":"Do you outsource security functions to third-party providers?","topic":"Incident Response"},{"id":50,"question":"Do you use anti virus software to protect your devices? If yes, describe.","topic":"Network & Endpoint Security"},{"id":51,"question":"Will your organization be accessing Client XYZ's network?","topic":"Network & Endpoint Security"},{"id":52,"question":"Will you be using a Client XYZ asset to access Client XYZ's network?","topic":"Network & Endpoint Security"},{"id":53,"question":"Please list out all authorized personnel, including first and last names and e-mail addresses from your organization that will have access to Client XYZ's assets or network.","topic":"Network & Endpoint Security"},{"id":54,"question":"Please submit a network architecture diagram and details of your endpoint protection measures, including how your organization complies with firewall and DNS security standards when accessing XYZ's networks.","topic":"Network & Endpoint Security"},{"id":55,"question":"Do you keep an inventory of information technology (IT) assets and software?","topic":"Asset Management"},{"id":56,"question":"Does your organization have identity and access controls in place?","topic":"Asset Management"},{"id":57,"question":"Does your organization leverage role-based access control?","topic":"Asset Management"},{"id":58,"question":"Do you limit and periodically review user access privileges and controls?","topic":"Asset Management"},{"id":59,"question":"What is the cadence of your access reviews?(Drop Down)","topic":"Asset Management"},{"id":60,"question":"Does your organization require replay-resistant authentication mechanisms such as OTP or MFA?","topic":"Asset Management"},{"id":61,"question":"Are the external authenticators in use, NIST compliant?","topic":"Asset Management"},{"id":62,"question":"Does your organization enforce the principle of least privilege?","topic":"Asset Management"},{"id":63,"question":"Do you conduct information security risk assessments at least annually?","topic":"Risk Assessment"},{"id":64,"question":"How do you prioritize critical assets for your organization?","topic":"Risk Assessment"},{"id":65,"question":"Does your organization conduct penetration testing at least annually?","topic":"Risk Assessment"},{"id":66,"question":"Have the findings from the most recent penetration test been remediated?","topic":"Risk Assessment"}];
+const PROFILE_EMBEDDED = {"1":{"question_id":1,"answer":"Yes, Solsphere / Regodit has established a formal Information Security Program governed by its Information Security Policy.","status":"verified","evidence":"This Information Security Policy defines how the company protects the confidentiality, integrity, and availability of the information it holds and processes.","source":"Regodit_information_security_policy_v1.0.docx","confidence":"high"},"2":{"question_id":2,"answer":"Yes, Regodit AI has defined and documented standard operating procedures and policies covering all key control domains.","status":"verified","evidence":"Regodit AI has defined and documented standard operating procedures for all key control areas including Access Control, Change Management, Incident Management, Backup and Recovery, Data Communications, Risk Assessment, Data Retention, Vendor Management, Privacy, and Processing Integrity.","source":"Regodit AI_SOC2_Type_II_Report_Test.docx","confidence":"high"},"3":{"question_id":3,"answer":"No — Regodit's information security policies are internally classified 'Internal/Confidential,' not public.","status":"verified","evidence":"Document Control tables classify all policies as Internal / Confidential.","source":"Regodit_information_security_policy_v1.0.docx (Document Control table)","confidence":null},"4":{"question_id":4,"answer":"Yes, job postings, requisitions, and individual job descriptions document role responsibilities including data handling expectations and conduct.","status":"verified","evidence":"All job postings and requisitions must include detailed descriptions of role responsibilities, essential skills, required certifications, and expectations regarding conduct and data handling.","source":"Regodit_hr_policy_v1.0.docx","confidence":"high"},"5":{"question_id":5,"answer":"Yes, procedures are in place where risks scored as High or Critical and control deficiencies are escalated to company leadership and the CEO.","status":"verified","evidence":"Risks scored as High or Critical are escalated to company leadership within five business days of identification.","source":"Regodit_risk_management_policy_v1.0.docx","confidence":"high"},"6":{"question_id":6,"answer":"Subcontracting requires prior written consent from the Company before engaging any third party that requires access to systems, code, or Confidential Information.","status":"verified","evidence":"Prior written consent of the Company shall be required before subcontracting any services under this Agreement to a third party that require access to Company's systems, code, or Confidential Information..","source":"Master Services Agreement.docx","confidence":"high"},"7":{"question_id":7,"answer":"Yes, Regodit maintains a formal Vendor Risk Management Policy.","status":"verified","evidence":"This policy establishes a risk-based process for selecting, assessing, contracting with, monitoring, and offboarding vendors that may affect Solsphere AI Inc. (\"Solsphere\"), the Regodit service, customer data, company information, or the security and availability of company systems.","source":"Regodit_Vendor_Risk_Management_Policy.docx","confidence":"high"},"8":{"question_id":8,"answer":"The Third-Party Risk Management Policy is established in the Vendor Risk Management Policy document.","status":"verified","evidence":"VENDOR RISK MANAGEMENT POLICY Solsphere AI Inc. | Regodit","source":"Regodit_Vendor_Risk_Management_Policy.docx","confidence":"high"},"9":{"question_id":9,"answer":"Yes, the policy includes due diligence requirements for subprocessors, vendor dependencies, and contractual data processing requirements.","status":"verified","evidence":"Where a vendor will process personal data on Solsphere's behalf, an appropriate data processing agreement must be executed before processing begins. Any customer notification or consent requirements for new subprocessors must be completed before use.","source":"Regodit_Vendor_Risk_Management_Policy.docx","confidence":"high"},"10":{"question_id":10,"answer":"Yes, third-party and subcontractor agreements include security, confidentiality, and data processing obligations.","status":"verified","evidence":"Regodit AI establishes agreements with third parties and subcontractors (including AWS) that include clearly defined terms, conditions, security requirements, and data processing obligations.","source":"Regodit AI_SOC2_Type_II_Report_Test.docx","confidence":"high"},"11":{"question_id":11,"answer":"Yes, all personnel including contractors complete information security awareness training upon joining and annually thereafter.","status":"verified","evidence":"All personnel, including contractors and third-party users with access to critical systems or data, must complete a formal information security awareness training program upon joining the organization. This training covers key areas such as password hygiene, phishing awareness, secure data handling, and regulatory compliance. The training is repeated annually to reinforce knowledge and to account for evolving security threats.","source":"Regodit_hr_policy_v1.0.docx","confidence":"high"},"12":{"question_id":12,"answer":"Employees receive training upon onboarding and on an annual basis.","status":"verified","evidence":"The training is repeated annually to reinforce knowledge and to account for evolving security threats.","source":"Regodit_hr_policy_v1.0.docx","confidence":"high"},"13":{"question_id":13,"answer":"Yes, role-specific training (such as HIPAA/Privacy training for those accessing customer data/PHI) is assigned during onboarding and annually.","status":"verified","evidence":"Assign HIPAA / Privacy training for those accessing customer data / PHI","source":"Regodit_hr_policy_v1.0.docx","confidence":"high"},"14":{"question_id":14,"answer":"Yes, Regodit maintains a comprehensive privacy program including DPAs, data classification, privacy notices, and controls over customer personal data.","status":"verified","evidence":"Controls include a privacy notice, DPAs with customer entities, data retention and deletion schedules, data subject rights handling procedures, access controls and encryption applied to customer operational data (including incidentally embedded PII), and privacy breach notification procedures within the incident response plan.","source":"Regodit AI_SOC2_Type_II_Report_Test.docx","confidence":"high"},"15":{"question_id":15,"answer":"Regodit only processes personal information (such as engineer contact details) incidentally embedded in customer-supplied alert payloads and logs for service delivery.","status":"verified","evidence":"Personal information incidentally embedded in customer-supplied alert and log data (on-call engineer names, email addresses, contact numbers) is processed solely for the purposes of delivering incident management and on-call automation services.","source":"Regodit AI_SOC2_Type_II_Report_Test.docx","confidence":"high"},"16":{"question_id":16,"answer":"Data is retained only as long as necessary for contractual/legal requirements, database backups are kept for a rolling 35 days, and cloud data is deleted using provider deletion mechanisms and cryptographic key erasure.","status":"verified","evidence":"Cloud-hosted data is deleted using the cloud providerï¿½s deletion mechanisms, supported by cryptographic erasure of the associated keys as described in the Cryptography Policy. Devices are wiped before reissue or disposal, and company data is removed from personally owned devices at departure, as described in the Asset Management Policy.","source":"Regodit_data_classification_policy_v1.0.docx","confidence":"high"},"17":{"question_id":17,"answer":"Yes, Regodit maintains a privacy notice defining data processing, retention, and data subject rights.","status":"verified","evidence":"Regodit AI maintains a privacy notice that describes the types of personal information processed, the purposes for processing, the basis for processing under applicable data protection laws, data retention practices, and data subject rights.","source":"Regodit AI_SOC2_Type_II_Report_Test.docx","confidence":"high"},"18":{"question_id":18,"answer":"Yes, privacy obligations and data processing terms are extended to third parties and subcontractors via formal agreements and DPAs.","status":"verified","evidence":"Regodit AI establishes agreements with third parties and subcontractors (including AWS) that include clearly defined terms, conditions, security requirements, and data processing obligations.","source":"Regodit AI_SOC2_Type_II_Report_Test.docx","confidence":"high"},"19":{"question_id":19,"answer":"Vendor is contractually obligated not to process or maintain PII outside the United States, and operational data is stored exclusively within configured AWS regions.","status":"verified","evidence":"not process or maintain the PII outside the United States","source":"Master Services Agreement.docx","confidence":"high"},"20":{"question_id":20,"answer":"Yes, sensitive data at rest is encrypted using AES-256.","status":"verified","evidence":"Sensitive data at rest is encrypted using AES-256. Databases, object storage, and disks are encrypted using the cloud providerï¿½s native encryption, enabled by default on production data stores.","source":"Regodit_cryptography_policy_v1.0.docx","confidence":"high"},"21":{"question_id":21,"answer":"Yes, data in transit is encrypted using TLS 1.3 (with TLS 1.2 permitted where TLS 1.3 is not yet supported).","status":"verified","evidence":"All data transmitted over public or internal networks is encrypted using TLS 1.3, with TLS 1.2 permitted only where a required system does not yet support TLS 1.3.","source":"Regodit_cryptography_policy_v1.0.docx","confidence":"high"},"22":{"question_id":22,"answer":"Regodit data is stored exclusively in cloud infrastructure hosted on Amazon Web Services (AWS); no on-premises data storage facilities are maintained.","status":"verified","evidence":"All customer operational data and company data are stored exclusively within AWS infrastructure. Regodit AI does not maintain any on-premises data storage facilities.","source":"Regodit AI_SOC2_Type_II_Report_Test.docx","confidence":"high"},"23":{"question_id":23,"answer":"Yes, Regodit maintains formal data retention and disposal policies, including secure wipe of devices and cryptographic erasure of cloud storage.","status":"verified","evidence":"Information is retained only as long as necessary for the business, legal, contractual, or regulatory purpose for which it is held.","source":"Regodit_data_classification_policy_v1.0.docx","confidence":"high"},"24":{"question_id":24,"answer":"Yes, we can provide network architecture and data flow diagrams on request. They show data flow from users through CDN/WAF, VPC segmentation, the application tier, and an encrypted data tier, plus the admin access path through MFA-verified VPN and a bastion host with centralized logging.","status":"confirmed","evidence":"Employee interview response","source":"Employee (verbal/typed)","confidence":null},"25":{"question_id":25,"answer":"Yes, physical and environmental security for cloud production infrastructure is provided by cloud vendors (AWS), while office presence is limited to a co-working facility with card-based access.","status":"verified","evidence":"Production systems are hosted with major cloud providers, which provide physical and environmental security for their data centers; the company owns no data centers or server rooms. Physical office presence is limited to a co-working facility with card-based building access, and most staff work remotely.","source":"Regodit_information_security_policy_v1.0.docx","confidence":"high"},"26":{"question_id":26,"answer":"No, services are provided remotely and not from the customer's physical site unless explicitly specified in an SOW.","status":"verified","evidence":"It is clarified that unless otherwise specified in the SOW or agreed by the Parties in writing, the Vendor shall provide services remotely and not from the Companyï¿½s site.","source":"Master Services Agreement.docx","confidence":"high"},"27":{"question_id":27,"answer":"Not applicable in current practice — our services are delivered remotely per standard MSA terms, so client site access doesn't occur. This is genuinely unknown/not addressed in our documents and should be confirmed if physical access is ever required.","status":"confirmed","evidence":"Employee interview response","source":"Employee (verbal/typed)","confidence":null},"28":{"question_id":28,"answer":"Regodit tracks all endpoint devices and IT assets centrally on its internal compliance platform.","status":"verified","evidence":"The company maintains its asset inventory on its internal compliance platform, which serves as the single record of assets in use.","source":"Regodit_asset_management_policy_v1.0.docx","confidence":"high"},"29":{"question_id":29,"answer":"Yes, endpoint devices require full-disk encryption, supported operating systems, native firewall/malware protection, screen locks, and strong authentication.","status":"verified","evidence":"Every device used for company work must have full-disk encryption enabled, must run a supported operating system kept current with security updates, must use the operating systemï¿½s native malware protection and firewall, and must be protected by a screen lock and strong authentication.","source":"Regodit_asset_management_policy_v1.0.docx","confidence":"high"},"30":{"question_id":30,"answer":"Yes, Regodit provides an AI-native SaaS compliance automation web application.","status":"verified","evidence":"The company provides an AI-native cybersecurity compliance automation platform designed to help businesses get compliant faster","source":"Regodit AI_SOC2_Type_II_Report_Test.docx","confidence":"high"},"31":{"question_id":31,"answer":"The application is the Regodit Platform (Regodit AI Platform Application).","status":"verified","evidence":"This report covers the Regodit Platform and the controls relevant to the Security, Availability, Confidentiality, Processing Integrity, and Privacy trust service criteria","source":"Regodit AI_SOC2_Type_II_Report_Test.docx","confidence":"high"},"32":{"question_id":32,"answer":"The platform provides AI-powered collection, validation, and mapping of compliance evidence, readiness assessments, gap identification, policy development, continuous control monitoring, and audit support.","status":"verified","evidence":"AI-powered collection, validation, and mapping of structured and unstructured evidence against applicable compliance controls. Readiness assessments, gap identification, remediation guidance, policy development, and compliance program implementation. Continuous monitoring of controls, risks, vendors, employee compliance activities, and audit readiness.","source":"Regodit AI_SOC2_Type_II_Report_Test.docx","confidence":"high"},"33":{"question_id":33,"answer":"Vulnerabilities can be reported through Regodit's published contact channel, which are acknowledged, triaged, and handled under the Vulnerability and Patch Management Policy.","status":"verified","evidence":"External parties, including customers and security researchers, may report a suspected vulnerability to the company through its published contact channel. Reports are acknowledged, triaged, and handled under this policy, and the reporter is kept informed of the outcome where appropriate.","source":"Regodit_vulnerability_and_patch_management_policy_v1.0.docx","confidence":"high"},"34":{"question_id":34,"answer":"Yes, certificate-based authentication and TLS certificates are utilized to secure external API and platform service communications.","status":"verified","evidence":"Digital signatures and certificate-based authentication are used where the platform provides them, including TLS certificates for service authentication","source":"Regodit_cryptography_policy_v1.0.docx","confidence":"high"},"35":{"question_id":35,"answer":"Yes, authentication across systems is centralized through a single sign-on (SSO) identity provider protected by multi-factor authentication.","status":"verified","evidence":"The policy is proportionate to a small, cloud-native, remote-first team in which most authentication is centralized through a single sign-on identity provider protected by multi-factor authentication.","source":"Regodit_password_and_secrets_policy_v1.0.docx","confidence":"high"},"36":{"question_id":36,"answer":"Yes, Regodit maintains a Secure Development Policy and SDLC guidelines.","status":"verified","evidence":"Principles for engineering secure systems shall be established, documented, maintained and applied to any information system implementation efforts.","source":"Secure Development Lifecycle Document 01.docx","confidence":"high"},"37":{"question_id":37,"answer":"Yes, developers follow secure coding practices including peer pull-request review before merge.","status":"verified","evidence":"Source code is managed in a version-control platform, and changes require peer pull-request review before merge; developers follow secure coding practices.","source":"Regodit_information_security_policy_v1.0.docx (Section 13)","confidence":"high"},"38":{"question_id":38,"answer":"No automated internal scanning program — relies on annual third-party penetration testing, AWS GuardDuty findings, and manual review.","status":"verified","evidence":"The company does not currently operate automated vulnerability scanning or an automated patch-management platform.","source":"Regodit_vulnerability_and_patch_management_policy_v1.0.docx (Section 3-4)","confidence":"high"},"39":{"question_id":39,"answer":"Vulnerability assessments and penetration testing are conducted at least annually and following major product or infrastructure changes.","status":"verified","evidence":"Third-party vulnerability assessment and penetration testing, commissioned at least annually and additionally following a major change to the product or infrastructure.","source":"Regodit_vulnerability_and_patch_management_policy_v1.0.docx","confidence":"high"},"40":{"question_id":40,"answer":"Documented remediation timelines are: Critical vulnerabilities within 7 days; High vulnerabilities within 30 days.","status":"verified","evidence":"Critical: Within 7 days | Prioritized over planned work. Where a vulnerability is being actively exploited or affects customer data, it is treated as an incident under the Incident Management Policy and addressed immediately. High: Within 30 days | Scheduled into the current work cycle.","source":"Regodit_vulnerability_and_patch_management_policy_v1.0.docx","confidence":"high"},"41":{"question_id":41,"answer":"Automated daily snapshots of production databases are maintained with 35-day retention and point-in-time recovery; disaster recovery restores data from backups and redeploys applications from source control into alternative availability zones.","status":"verified","evidence":"Recovery is performed by restoring data from the most recent available backup, redeploying the application from source control and its stored configuration, verifying integrity and functionality before service is resumed, and monitoring closely afterwards for recurrence.","source":"Regodit_business_continuity_and_disaster_recovery_policy_v1.0.docx","confidence":"high"},"42":{"question_id":42,"answer":"The BC/DR policy is documented in 'Regodit_business_continuity_and_disaster_recovery_policy_v1.0.docx' and 'BCP_DR_Plan_Solsphere.docx'.","status":"verified","evidence":"Business Continuity and Disaster Recovery Policy Solsphere AI Inc. | Regodit","source":"Regodit_business_continuity_and_disaster_recovery_policy_v1.0.docx","confidence":"high"},"43":{"question_id":43,"answer":"Yes, system activity, authentication events, and privileged actions are logged via cloud-native logging, and formal logs are kept for all SEV-0/SEV-1 security incidents.","status":"verified","evidence":"Access and privileged activity are logged using cloud-native logging. The cloud providerï¿½s logging service retains logs for approximately one year, and logs shipped to object storage are retained on a long-term basis.","source":"Regodit_access_control_policy_v1.0.docx","confidence":"high"},"44":{"question_id":44,"answer":"Yes. Additional detail: We don't operate a corporate wireless network to monitor since we're remote-first with no physical office infrastructure. Employees connect via home or co-working networks outside our control. This is inferred from context, not explicitly documented — flag as low confidence, needs employee confirmation.","status":"confirmed","evidence":"Employee interview response","source":"Employee (verbal/typed)","confidence":null},"45":{"question_id":45,"answer":"Yes, Regodit maintains an Incident Management Policy covering preparation, detection, containment, eradication, recovery, and post-incident review across severity levels SEV-0 to SEV-3.","status":"verified","evidence":"This policy establishes the framework by which Solsphere identifies, classifies, responds to, communicates about, and learns from information security and availability incidents.","source":"Regodit_Incident_Management_Policy.docx","confidence":"high"},"46":{"question_id":46,"answer":"At least annually.","status":"verified","evidence":"Review Cycle | Annual, or upon material change to systems, regulations, or organizational structure","source":"Regodit_Incident_Management_Policy.docx","confidence":"high"},"47":{"question_id":47,"answer":"Yes, client notification timelines for security incidents affecting client data or services are mandated in accordance with applicable contracts/DPAs.","status":"verified","evidence":"Where an incident affects a client's data or service, Solsphere will notify the client in accordance with the notification timeline and method specified in the applicable client contract/DPA.","source":"Regodit_Incident_Management_Policy.docx","confidence":"high"},"48":{"question_id":48,"answer":"Unknown — not disclosed in any provided document. Needs direct confirmation from the employee/founders, since incident history isn't something we should infer or guess.. Additional detail: No, to the best of our knowledge there have been no security events or incidents in the last 5 years, but this should still be verified directly with the founders as authoritative confirmation.","status":"confirmed","evidence":"Employee interview response","source":"Employee (verbal/typed)","confidence":null},"49":{"question_id":49,"answer":"Security and internal audit functions are managed internally by the founders, though third-party firms are engaged for annual penetration testing.","status":"verified","evidence":"Given the companyï¿½s size, it does not maintain separate security, incident-response, disaster-recovery, or internal-audit teams. These functions are performed by the founders.","source":"Regodit_information_security_policy_v1.0.docx","confidence":"high"},"50":{"question_id":50,"answer":"Yes, devices must utilize operating system native malware protection and firewall capabilities.","status":"verified","evidence":"must use the operating systemï¿½s native malware protection and firewall... The company does not deploy a separate commercial endpoint detection and response product; it relies on operating-system native protections","source":"Regodit_asset_management_policy_v1.0.docx","confidence":"high"},"51":{"question_id":51,"answer":"Services are delivered remotely and not from the customer's site unless explicitly agreed in writing.","status":"verified","evidence":"It is clarified that unless otherwise specified in the SOW or agreed by the Parties in writing, the Vendor shall provide services remotely and not from the Companyï¿½s site.","source":"Master Services Agreement.docx","confidence":"high"},"52":{"question_id":52,"answer":"No, we would use our own company-issued devices to access any client network, consistent with our Asset Management Policy covering company-work devices. This specific client-asset scenario isn't explicitly addressed in our documents, so treat as inferred, not fully verified.. Additional detail: Confirmed with the assumption that we follow standard practice: our team uses company-issued devices exclusively for client engagements. No policy explicitly prohibits client-provided hardware, but it hasn't come up in practice. This should be formally verified with IT/Security before finalizing.","status":"confirmed","evidence":"Employee interview response","source":"Employee (verbal/typed)","confidence":null},"53":{"question_id":53,"answer":"Personnel recorded in the system access review record include: J. Martinez (j.martinez@regodit.net), A. Patel (a.patel@regodit.net), S. Wong (s.wong@regodit.net), R. Osei (r.osei@regodit.net), T. Nguyen (t.nguyen@regodit.net), M. Delgado (m.delgado@regodit.net), and K. O'Brien (k.obrien@regodit.net).","status":"verified","evidence":"J. Martinez | j.martinez@regodit.net | Engineering | Admin | 08-29-26 | Y | N/A | N/A A. Patel | a.patel@regodit.net | Engineering | Editor | 09-01-26 | Y | N/A | N/A S. Wong | s.wong@regodit.net | IT Operations | Admin | 07-15-26 | N | Revoke access | Viewer R. Osei | r.osei@regodit.net | Finance | Viewer | 09-02-26 | Y | N/A | N/A T. Nguyen | t.nguyen@regodit.net | Engineering | Editor | 05-10-26 | N | Change access | Viewer M. Delgado | m.delgado@regodit.net | Contractor - IT Support | Admin | 03-22-26 | N | Revoke access | N/A K. O'Brien | k.obrien@regodit.net | Security | Admin | 09-03-26 | Y | N/A | N/A","source":"Access_Review_Records.xlsx","confidence":"high"},"54":{"question_id":54,"answer":"Network perimeter access is restricted using cloud-native firewalls and security groups; endpoint devices require OS-native firewalls, malware protection, full-disk encryption, and remote access via VPN.","status":"verified","evidence":"Network access is controlled using cloud-native firewalls configured to restrict inbound traffic. Production and non-production environments are separated at the cloud account level. Remote access to internal resources is being consolidated onto the company VPN; this rollout is in progress.","source":"Regodit_information_security_policy_v1.0.docx","confidence":"high"},"55":{"question_id":55,"answer":"Yes, an IT asset and software inventory is maintained on the internal compliance platform.","status":"verified","evidence":"The company maintains its asset inventory on its internal compliance platform, which serves as the single record of assets in use.","source":"Regodit_asset_management_policy_v1.0.docx","confidence":"high"},"56":{"question_id":56,"answer":"Yes, identity and access controls are established under the Access Control Policy.","status":"verified","evidence":"This Access Control Policy establishes how access to the companyï¿½s information systems, applications, and data is granted, managed, and revoked, following the principles of least privilege and need-to-know.","source":"Regodit_access_control_policy_v1.0.docx","confidence":"high"},"57":{"question_id":57,"answer":"Yes, access is provisioned using role-based access controls via AWS IAM and SSO.","status":"verified","evidence":"Access to the production environment is provisioned through AWS IAM with role-based, least-privilege assignments.","source":"Regodit AI_SOC2_Type_II_Report_Test.docx","confidence":"high"},"58":{"question_id":58,"answer":"Yes, user access privileges are granted on a least-privilege basis and reviewed periodically.","status":"verified","evidence":"Access to all systems is reviewed at least annually across all users to confirm that privileges remain appropriate to each personï¿½s role.","source":"Regodit_access_control_policy_v1.0.docx","confidence":"high"},"59":{"question_id":59,"answer":"At least annually.","status":"verified","evidence":"Access to all systems is reviewed at least annually across all users to confirm that privileges remain appropriate to each personï¿½s role.","source":"Regodit_access_control_policy_v1.0.docx","confidence":"high"},"60":{"question_id":60,"answer":"Yes, multi-factor authentication (MFA) is enforced across all core systems and cloud consoles.","status":"verified","evidence":"Multi-factor authentication is enforced across all core systems, including cloud infrastructure consoles, the identity and email provider, and the source-code platform.","source":"Regodit_access_control_policy_v1.0.docx","confidence":"high"},"61":{"question_id":61,"answer":"Yes, authentication and password policies align with NIST SP 800-63B standards.","status":"verified","evidence":"This policy supports the companyï¿½s SOC 2 objectives and aligns with NIST SP 800-63B.","source":"Regodit_password_and_secrets_policy_v1.0.docx","confidence":"high"},"62":{"question_id":62,"answer":"Yes, Regodit strictly enforces the principle of least privilege.","status":"verified","evidence":"This Access Control Policy establishes how access to the companyï¿½s information systems, applications, and data is granted, managed, and revoked, following the principles of least privilege and need-to-know.","source":"Regodit_access_control_policy_v1.0.docx","confidence":"high"},"63":{"question_id":63,"answer":"Yes, information security risk assessments and risk register updates are conducted at least annually.","status":"verified","evidence":"The risk register is reviewed and updated at least annually, and immediately following any significant incident, new system or vendor onboarding, or material change to the business.","source":"Regodit_risk_management_policy_v1.0.docx","confidence":"high"},"64":{"question_id":64,"answer":"Critical assets are prioritized based on the sensitivity and classification level (Confidential/Restricted) of the data they store or process.","status":"verified","evidence":"Assets are classified according to the sensitivity of the data they hold or access, using the classification levels defined in the Data Classification Policy. Assets that store or process Confidential or Restricted data are subject to the strongest protection requirements, including encryption and restricted access.","source":"Regodit_asset_management_policy_v1.0.docx","confidence":"high"},"65":{"question_id":65,"answer":"Yes, third-party penetration testing is commissioned at least annually.","status":"verified","evidence":"Third-party vulnerability assessment and penetration testing, commissioned at least annually and additionally following a major change to the product or infrastructure.","source":"Regodit_vulnerability_and_patch_management_policy_v1.0.docx","confidence":"high"},"66":{"question_id":66,"answer":"Findings from the most recent penetration test report are currently marked as Open and scheduled for remediation.","status":"verified","evidence":"Remediation of critical/high findings should occur immediately, with scheduled fixes for remaining items.","source":"VAPT Report 01.docx","confidence":"high"}};
+
+const thread = document.getElementById('thread');
+let QUESTIONS = [], PROFILE = {};
+let memory = [];              // what IRIS has learned this conversation
+let lastQuestion = '';        // the questionnaire item we're currently on
+let pendingFollowup = null;   // multi-step follow-up chain in progress
+let awaitingConfirm = null;   // question we just read back to the user for confirmation
+
+function wantsSummary(t){
+  return /(^|\b)(report|questionnaire|summary|summarise|summarize|recap|what have you|everything so far)(\b|$)/i.test(t);
+}
+
+/* ---------------- data ---------------- */
+async function loadData(){
+  try{
+    const [q,p] = await Promise.all([fetch('questions.json'), fetch('security_profile.json')]);
+    if(!q.ok || !p.ok) throw 0;
+    QUESTIONS = await q.json(); PROFILE = await p.json();
+  }catch(e){
+    QUESTIONS = QUESTIONS_EMBEDDED; PROFILE = PROFILE_EMBEDDED;
+  }
+}
+const ready = loadData();
+
+/* ---------------- bubbles ---------------- */
+function esc(s){
+  return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function bubble(text, who){
+  const div = document.createElement('div');
+  div.className = 'b ' + who;
+  div.innerHTML = esc(text).replace(/\n/g,'<br>');
+  thread.appendChild(div);
+  thread.scrollTop = thread.scrollHeight;
+}
+function me(text){ bubble(text,'me'); }
+
+function typing(on){
+  let t = document.getElementById('typing');
+  if(on){
+    if(t) return;
+    t = document.createElement('div');
+    t.className='typing'; t.id='typing';
+    t.innerHTML='<i></i><i></i><i></i>';
+    thread.appendChild(t);
+    thread.scrollTop = thread.scrollHeight;
+  } else if(t){ t.remove(); }
+}
+const wait = ms => new Promise(r=>setTimeout(r,ms));
+
+/* say() sends one or more bot bubbles, with a realistic typing pause before each */
+async function say(...lines){
+  for(const line of lines){
+    if(!line) continue;
+    typing(true);
+    await wait(Math.min(1100, 380 + line.length * 9));
+    typing(false);
+    bubble(line,'bot');
+    await wait(160);
+  }
+}
+
+/* keep answers to one short, straight sentence */
+function short(text){
+  let a = String(text||'').trim();
+  const m = a.match(/^.*?[.!?](\s|$)/);
+  if(m) a = m[0].trim();
+  if(a.length > 140){
+    const cut = a.search(/;|,\s(including|such as|covering|which|though|and\s)/i);
+    if(cut > 55) a = a.slice(0, cut).trim().replace(/[,;:]$/,'') + '.';
+  }
+  if(a.length > 190) a = a.slice(0,185).trim().replace(/[,;:]$/,'') + '…';
+  return a;
+}
+
+/* ---------------- memory ---------------- */
+function remember(question, answer){
+  const hit = memory.find(m => m.question === question);
+  if(hit) hit.answer = answer; else memory.push({question, answer});
+}
+function recall(question){
+  const hit = memory.find(m => m.question === question);
+  return hit ? hit.answer : null;
+}
+
+/* ---------------- matching ---------------- */
+const SYN = {
+  'multi-factor':'mfa','multifactor':'mfa','two-factor':'mfa','2fa':'mfa',
+  'password':'authentication','passwords':'authentication',
+  'off-boarding':'offboarding','off boarding':'offboarding',
+  'pentest':'penetration','pentesting':'penetration',
+  'scanning':'scans','scan':'scans',
+  'encrypted':'encryption','encrypt':'encryption',
+  'production':'access','prod':'access'
+};
+function expand(t){
+  let s = ' ' + t.toLowerCase() + ' ';
+  Object.keys(SYN).forEach(k => { if(s.includes(k)) s += ' ' + SYN[k]; });
+  return s;
+}
+const STOP = new Set(['do','you','your','the','a','an','is','are','of','to','for','and','or','have','has','will',
+  'be','if','so','any','on','in','with','we','our','conduct','provide','perform','require','ensure','describe']);
+function words(s){
+  return expand(s).replace(/[^a-z0-9 ]/g,' ').split(' ').filter(w=>w.length>2 && !STOP.has(w));
+}
+function findMatch(text){
+  const a = new Set(words(text));
+  let best=null, score=0;
+  QUESTIONS.forEach(q=>{
+    let hits=0;
+    words(q.question).forEach(w=>{ if(a.has(w)) hits++; });
+    if(hits>score){ score=hits; best=q; }
+  });
+  return score>=1 ? best : null;
+}
+
+/* ---------------- follow-up chains ---------------- */
+const CHAINS = [
+  { match: t => t.includes('backup'),
+    steps: ['How frequently?','Are they automated?'],
+    keys: ['frequency','automated'],
+    done: c => 'Got it — backups are ' + (/^\s*(y|auto)/i.test(c.automated||'') ? 'automated' : 'run manually')
+      + ' and performed ' + ((c.frequency||'').trim().replace(/\.$/,'').toLowerCase() || 'at an unspecified frequency') + '.' },
+  { match: t => /\bmfa\b|multi-factor|multifactor|two-factor|\b2fa\b/.test(t),
+    steps: ['Is it enforced everywhere, or only on some systems?'],
+    keys: ['scope'],
+    done: c => 'Got it — MFA is enabled, and it covers ' + (c.scope||'an unspecified scope') + '.' },
+  { match: t => /vulnerab|pentest|penetration/.test(t),
+    steps: ['How often do you run them?','Automated tooling, or a third party?'],
+    keys: ['cadence','tooling'],
+    done: c => 'Got it — scans run ' + ((c.cadence||'').toLowerCase() || 'at an unspecified cadence')
+      + ', using ' + ((c.tooling||'').toLowerCase() || 'unspecified tooling') + '.' },
+  { match: t => t.includes('background') && t.includes('check'),
+    steps: ['For every new hire, or only some roles?'],
+    keys: ['scope'],
+    done: c => 'Got it — background checks cover ' + (c.scope||'an unspecified scope') + '.' },
+  { match: t => t.includes('encrypt'),
+    steps: ['At rest, in transit, or both?'],
+    keys: ['scope'],
+    done: c => 'Got it — data is encrypted ' + (c.scope||'in an unspecified way') + '.' },
+  { match: t => t.includes('offboard') || t.includes('termination'),
+    steps: ['How quickly is access revoked after someone leaves?'],
+    keys: ['sla'],
+    done: c => 'Got it — access is revoked ' + (c.sla||'at an unspecified time') + ' after someone leaves.' }
+];
+function chainFor(text){ const t=(text||'').toLowerCase(); return CHAINS.find(c=>c.match(t)) || null; }
+function vague(v){ return v.trim().split(/\s+/).length <= 3; }
+function isQuestion(t){
+  const s = t.trim().toLowerCase();
+  if(s.endsWith('?')) return true;
+  return ['is','do','does','are','was','were','will','can','how','what','who','where','when','which','any']
+    .includes(s.split(' ')[0]);
+}
+
+/* ---------------- answering ---------------- */
+async function answer(text){
+  const t = text.toLowerCase();
+
+  if(/^(hi|hey|hello|yo|sup|good morning|good afternoon|good evening)\b/.test(t)){
+    await say('Hi! Ask me anything about our security — MFA, backups, encryption, access, incidents.');
+    return;
+  }
+
+  if(wantsSummary(t)){
+    if(memory.length === 0){
+      await say('Nothing yet — ask me anything.');
+    } else {
+      await say('Here\'s what I have so far:');
+      for(const m of memory) await say(m.question + '\n' + m.answer);
+    }
+    return;
+  }
+
+  /* conflicting sources — DR / cross-region backups */
+  if(t.includes('disaster') || (t.includes('backup') && /(region|replicat|recover|tested)/.test(t))){
+    const m = findMatch(text);
+    lastQuestion = m ? m.question : 'Disaster recovery and backups';
+    await say(
+      'I have conflicting information on that.',
+      'One record says there are no second-region backups and no restore test. Another says cross-region replication is in place.',
+      'Which one is right?');
+    return;
+  }
+
+  /* contractor / production access — policy vs. access review */
+  if(t.includes('contractor') || t.includes('production access') || t.includes('least privilege')){
+    lastQuestion = 'Contractor access to production';
+    await say(
+      'Contractors are meant to have least-privilege access only.',
+      'But a recent access review flagged a contractor, M. Delgado, with Admin access marked "not justified".',
+      'Was it revoked?');
+    return;
+  }
+
+  awaitingConfirm = null;
+
+  /* documents first */
+  const match = findMatch(text);
+  if(match){
+    lastQuestion = match.question;
+
+    const known = recall(match.question);
+    if(known){
+      awaitingConfirm = match.question;
+      await say(known, 'Still accurate?');
+      return;
+    }
+
+    const p = PROFILE[String(match.id)] || {};
+    if((p.status === 'verified' || p.status === 'confirmed') && p.answer){
+      const a = short(p.answer);
+      remember(match.question, a);
+      await say(a);
+      return;
+    }
+    await say('I don\'t have a confirmed answer on that yet.', 'Can you tell me?');
+    return;
+  }
+
+  lastQuestion = text;
+  await say('I don\'t have a confirmed answer on that yet.', 'Can you tell me?');
+}
+
+/* ---------------- input ---------------- */
+async function send(){
+  const el = document.getElementById('input');
+  const text = el.value.trim();
+  if(!text) return;
+  el.value = '';
+  me(text);
+  await ready;
+
+  /* mid follow-up chain: this is an answer, not a new question */
+  if(pendingFollowup && !isQuestion(text)){
+    const c = pendingFollowup;
+    c.collected[c.chain.keys[c.step]] = text;
+    c.step++;
+    if(c.step < c.chain.steps.length){
+      await say(c.chain.steps[c.step]);
+      return;
+    }
+    const summary = c.chain.done(c.collected);
+    remember(c.question, summary.replace(/^Got it — /,''));
+    pendingFollowup = null;
+    await say(summary);
+    return;
+  }
+  pendingFollowup = null;
+
+  /* confirming or correcting something already recorded */
+  if(awaitingConfirm && !isQuestion(text)){
+    const q = awaitingConfirm; awaitingConfirm = null;
+    if(/^(yes|yep|yeah|yup|correct|right|still|it is|accurate|no change|same)/i.test(text.trim())){
+      await say('Perfect, thanks.');
+    } else {
+      remember(q, text);
+      await say('Got it, updated.');
+    }
+    return;
+  }
+
+  if(wantsSummary(text)){ await answer(text); return; }
+  if(isQuestion(text)){ await answer(text); return; }
+
+  /* it's an answer to whatever we last asked about */
+  if(!lastQuestion){
+    await say('What would you like to know?');
+    return;
+  }
+
+  const chain = chainFor(lastQuestion);
+  if(chain && vague(text)){
+    pendingFollowup = { chain, question: lastQuestion, step: 0, collected: {} };
+    await say(chain.steps[0]);
+    return;
+  }
+
+  remember(lastQuestion, text);
+  await say('Got it, thanks.');
+}
+
+/* ---------------- boot ---------------- */
+(async function(){
+  await ready;
+  await say('Hi, I\'m IRIS.', 'Ask me anything about our security.');
+  document.getElementById('input').focus();
+})();
+</script>
+</body>
+</html>
