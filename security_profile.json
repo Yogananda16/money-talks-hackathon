@@ -1,464 +1,530 @@
-[
-  {
-    "id": 1,
-    "found": true,
+{
+  "1": {
+    "question_id": 1,
     "answer": "Yes, Solsphere / Regodit has established a formal Information Security Program governed by its Information Security Policy.",
+    "status": "verified",
     "evidence": "This Information Security Policy defines how the company protects the confidentiality, integrity, and availability of the information it holds and processes.",
-    "source": "Regodit_information_security_policy_v1.0.docx"
+    "source": "Regodit_information_security_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 2,
-    "found": true,
+  "2": {
+    "question_id": 2,
     "answer": "Yes, Regodit AI has defined and documented standard operating procedures and policies covering all key control domains.",
+    "status": "verified",
     "evidence": "Regodit AI has defined and documented standard operating procedures for all key control areas including Access Control, Change Management, Incident Management, Backup and Recovery, Data Communications, Risk Assessment, Data Retention, Vendor Management, Privacy, and Processing Integrity.",
-    "source": "Regodit AI_SOC2_Type_II_Report_Test.docx"
+    "source": "Regodit AI_SOC2_Type_II_Report_Test.docx",
+    "confidence": "high"
   },
-  {
-    "id": 3,
-    "found": false,
-    "answer": "Not found in the provided documents.",
-    "evidence": "",
-    "source": ""
+  "3": {
+    "question_id": 3,
+    "answer": "No \u2014 Regodit's information security policies are internally classified 'Internal/Confidential,' not public.",
+    "status": "verified",
+    "evidence": "Document Control tables classify all policies as Internal / Confidential.",
+    "source": "Regodit_information_security_policy_v1.0.docx (Document Control table)",
+    "confidence": null
   },
-  {
-    "id": 4,
-    "found": true,
+  "4": {
+    "question_id": 4,
     "answer": "Yes, job postings, requisitions, and individual job descriptions document role responsibilities including data handling expectations and conduct.",
+    "status": "verified",
     "evidence": "All job postings and requisitions must include detailed descriptions of role responsibilities, essential skills, required certifications, and expectations regarding conduct and data handling.",
-    "source": "Regodit_hr_policy_v1.0.docx"
+    "source": "Regodit_hr_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 5,
-    "found": true,
+  "5": {
+    "question_id": 5,
     "answer": "Yes, procedures are in place where risks scored as High or Critical and control deficiencies are escalated to company leadership and the CEO.",
+    "status": "verified",
     "evidence": "Risks scored as High or Critical are escalated to company leadership within five business days of identification.",
-    "source": "Regodit_risk_management_policy_v1.0.docx"
+    "source": "Regodit_risk_management_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 6,
-    "found": true,
+  "6": {
+    "question_id": 6,
     "answer": "Subcontracting requires prior written consent from the Company before engaging any third party that requires access to systems, code, or Confidential Information.",
+    "status": "verified",
     "evidence": "Prior written consent of the Company shall be required before subcontracting any services under this Agreement to a third party that require access to Company's systems, code, or Confidential Information..",
-    "source": "Master Services Agreement.docx"
+    "source": "Master Services Agreement.docx",
+    "confidence": "high"
   },
-  {
-    "id": 7,
-    "found": true,
+  "7": {
+    "question_id": 7,
     "answer": "Yes, Regodit maintains a formal Vendor Risk Management Policy.",
+    "status": "verified",
     "evidence": "This policy establishes a risk-based process for selecting, assessing, contracting with, monitoring, and offboarding vendors that may affect Solsphere AI Inc. (\"Solsphere\"), the Regodit service, customer data, company information, or the security and availability of company systems.",
-    "source": "Regodit_Vendor_Risk_Management_Policy.docx"
+    "source": "Regodit_Vendor_Risk_Management_Policy.docx",
+    "confidence": "high"
   },
-  {
-    "id": 8,
-    "found": true,
+  "8": {
+    "question_id": 8,
     "answer": "The Third-Party Risk Management Policy is established in the Vendor Risk Management Policy document.",
+    "status": "verified",
     "evidence": "VENDOR RISK MANAGEMENT POLICY Solsphere AI Inc. | Regodit",
-    "source": "Regodit_Vendor_Risk_Management_Policy.docx"
+    "source": "Regodit_Vendor_Risk_Management_Policy.docx",
+    "confidence": "high"
   },
-  {
-    "id": 9,
-    "found": true,
+  "9": {
+    "question_id": 9,
     "answer": "Yes, the policy includes due diligence requirements for subprocessors, vendor dependencies, and contractual data processing requirements.",
+    "status": "verified",
     "evidence": "Where a vendor will process personal data on Solsphere's behalf, an appropriate data processing agreement must be executed before processing begins. Any customer notification or consent requirements for new subprocessors must be completed before use.",
-    "source": "Regodit_Vendor_Risk_Management_Policy.docx"
+    "source": "Regodit_Vendor_Risk_Management_Policy.docx",
+    "confidence": "high"
   },
-  {
-    "id": 10,
-    "found": true,
+  "10": {
+    "question_id": 10,
     "answer": "Yes, third-party and subcontractor agreements include security, confidentiality, and data processing obligations.",
+    "status": "verified",
     "evidence": "Regodit AI establishes agreements with third parties and subcontractors (including AWS) that include clearly defined terms, conditions, security requirements, and data processing obligations.",
-    "source": "Regodit AI_SOC2_Type_II_Report_Test.docx"
+    "source": "Regodit AI_SOC2_Type_II_Report_Test.docx",
+    "confidence": "high"
   },
-  {
-    "id": 11,
-    "found": true,
+  "11": {
+    "question_id": 11,
     "answer": "Yes, all personnel including contractors complete information security awareness training upon joining and annually thereafter.",
+    "status": "verified",
     "evidence": "All personnel, including contractors and third-party users with access to critical systems or data, must complete a formal information security awareness training program upon joining the organization. This training covers key areas such as password hygiene, phishing awareness, secure data handling, and regulatory compliance. The training is repeated annually to reinforce knowledge and to account for evolving security threats.",
-    "source": "Regodit_hr_policy_v1.0.docx"
+    "source": "Regodit_hr_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 12,
-    "found": true,
+  "12": {
+    "question_id": 12,
     "answer": "Employees receive training upon onboarding and on an annual basis.",
+    "status": "verified",
     "evidence": "The training is repeated annually to reinforce knowledge and to account for evolving security threats.",
-    "source": "Regodit_hr_policy_v1.0.docx"
+    "source": "Regodit_hr_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 13,
-    "found": true,
+  "13": {
+    "question_id": 13,
     "answer": "Yes, role-specific training (such as HIPAA/Privacy training for those accessing customer data/PHI) is assigned during onboarding and annually.",
+    "status": "verified",
     "evidence": "Assign HIPAA / Privacy training for those accessing customer data / PHI",
-    "source": "Regodit_hr_policy_v1.0.docx"
+    "source": "Regodit_hr_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 14,
-    "found": true,
+  "14": {
+    "question_id": 14,
     "answer": "Yes, Regodit maintains a comprehensive privacy program including DPAs, data classification, privacy notices, and controls over customer personal data.",
+    "status": "verified",
     "evidence": "Controls include a privacy notice, DPAs with customer entities, data retention and deletion schedules, data subject rights handling procedures, access controls and encryption applied to customer operational data (including incidentally embedded PII), and privacy breach notification procedures within the incident response plan.",
-    "source": "Regodit AI_SOC2_Type_II_Report_Test.docx"
+    "source": "Regodit AI_SOC2_Type_II_Report_Test.docx",
+    "confidence": "high"
   },
-  {
-    "id": 15,
-    "found": true,
+  "15": {
+    "question_id": 15,
     "answer": "Regodit only processes personal information (such as engineer contact details) incidentally embedded in customer-supplied alert payloads and logs for service delivery.",
+    "status": "verified",
     "evidence": "Personal information incidentally embedded in customer-supplied alert and log data (on-call engineer names, email addresses, contact numbers) is processed solely for the purposes of delivering incident management and on-call automation services.",
-    "source": "Regodit AI_SOC2_Type_II_Report_Test.docx"
+    "source": "Regodit AI_SOC2_Type_II_Report_Test.docx",
+    "confidence": "high"
   },
-  {
-    "id": 16,
-    "found": true,
+  "16": {
+    "question_id": 16,
     "answer": "Data is retained only as long as necessary for contractual/legal requirements, database backups are kept for a rolling 35 days, and cloud data is deleted using provider deletion mechanisms and cryptographic key erasure.",
-    "evidence": "Cloud-hosted data is deleted using the cloud provider�s deletion mechanisms, supported by cryptographic erasure of the associated keys as described in the Cryptography Policy. Devices are wiped before reissue or disposal, and company data is removed from personally owned devices at departure, as described in the Asset Management Policy.",
-    "source": "Regodit_data_classification_policy_v1.0.docx"
+    "status": "verified",
+    "evidence": "Cloud-hosted data is deleted using the cloud provider\u00ef\u00bf\u00bds deletion mechanisms, supported by cryptographic erasure of the associated keys as described in the Cryptography Policy. Devices are wiped before reissue or disposal, and company data is removed from personally owned devices at departure, as described in the Asset Management Policy.",
+    "source": "Regodit_data_classification_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 17,
-    "found": true,
+  "17": {
+    "question_id": 17,
     "answer": "Yes, Regodit maintains a privacy notice defining data processing, retention, and data subject rights.",
+    "status": "verified",
     "evidence": "Regodit AI maintains a privacy notice that describes the types of personal information processed, the purposes for processing, the basis for processing under applicable data protection laws, data retention practices, and data subject rights.",
-    "source": "Regodit AI_SOC2_Type_II_Report_Test.docx"
+    "source": "Regodit AI_SOC2_Type_II_Report_Test.docx",
+    "confidence": "high"
   },
-  {
-    "id": 18,
-    "found": true,
+  "18": {
+    "question_id": 18,
     "answer": "Yes, privacy obligations and data processing terms are extended to third parties and subcontractors via formal agreements and DPAs.",
+    "status": "verified",
     "evidence": "Regodit AI establishes agreements with third parties and subcontractors (including AWS) that include clearly defined terms, conditions, security requirements, and data processing obligations.",
-    "source": "Regodit AI_SOC2_Type_II_Report_Test.docx"
+    "source": "Regodit AI_SOC2_Type_II_Report_Test.docx",
+    "confidence": "high"
   },
-  {
-    "id": 19,
-    "found": true,
+  "19": {
+    "question_id": 19,
     "answer": "Vendor is contractually obligated not to process or maintain PII outside the United States, and operational data is stored exclusively within configured AWS regions.",
+    "status": "verified",
     "evidence": "not process or maintain the PII outside the United States",
-    "source": "Master Services Agreement.docx"
+    "source": "Master Services Agreement.docx",
+    "confidence": "high"
   },
-  {
-    "id": 20,
-    "found": true,
+  "20": {
+    "question_id": 20,
     "answer": "Yes, sensitive data at rest is encrypted using AES-256.",
-    "evidence": "Sensitive data at rest is encrypted using AES-256. Databases, object storage, and disks are encrypted using the cloud provider�s native encryption, enabled by default on production data stores.",
-    "source": "Regodit_cryptography_policy_v1.0.docx"
+    "status": "verified",
+    "evidence": "Sensitive data at rest is encrypted using AES-256. Databases, object storage, and disks are encrypted using the cloud provider\u00ef\u00bf\u00bds native encryption, enabled by default on production data stores.",
+    "source": "Regodit_cryptography_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 21,
-    "found": true,
+  "21": {
+    "question_id": 21,
     "answer": "Yes, data in transit is encrypted using TLS 1.3 (with TLS 1.2 permitted where TLS 1.3 is not yet supported).",
+    "status": "verified",
     "evidence": "All data transmitted over public or internal networks is encrypted using TLS 1.3, with TLS 1.2 permitted only where a required system does not yet support TLS 1.3.",
-    "source": "Regodit_cryptography_policy_v1.0.docx"
+    "source": "Regodit_cryptography_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 22,
-    "found": true,
+  "22": {
+    "question_id": 22,
     "answer": "Regodit data is stored exclusively in cloud infrastructure hosted on Amazon Web Services (AWS); no on-premises data storage facilities are maintained.",
+    "status": "verified",
     "evidence": "All customer operational data and company data are stored exclusively within AWS infrastructure. Regodit AI does not maintain any on-premises data storage facilities.",
-    "source": "Regodit AI_SOC2_Type_II_Report_Test.docx"
+    "source": "Regodit AI_SOC2_Type_II_Report_Test.docx",
+    "confidence": "high"
   },
-  {
-    "id": 23,
-    "found": true,
+  "23": {
+    "question_id": 23,
     "answer": "Yes, Regodit maintains formal data retention and disposal policies, including secure wipe of devices and cryptographic erasure of cloud storage.",
+    "status": "verified",
     "evidence": "Information is retained only as long as necessary for the business, legal, contractual, or regulatory purpose for which it is held.",
-    "source": "Regodit_data_classification_policy_v1.0.docx"
+    "source": "Regodit_data_classification_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 24,
-    "found": false,
-    "answer": "Not found in the provided documents.",
-    "evidence": "",
-    "source": ""
+  "24": {
+    "question_id": 24,
+    "answer": null,
+    "status": "unknown",
+    "evidence": null,
+    "source": null,
+    "confidence": null
   },
-  {
-    "id": 25,
-    "found": true,
+  "25": {
+    "question_id": 25,
     "answer": "Yes, physical and environmental security for cloud production infrastructure is provided by cloud vendors (AWS), while office presence is limited to a co-working facility with card-based access.",
+    "status": "verified",
     "evidence": "Production systems are hosted with major cloud providers, which provide physical and environmental security for their data centers; the company owns no data centers or server rooms. Physical office presence is limited to a co-working facility with card-based building access, and most staff work remotely.",
-    "source": "Regodit_information_security_policy_v1.0.docx"
+    "source": "Regodit_information_security_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 26,
-    "found": true,
+  "26": {
+    "question_id": 26,
     "answer": "No, services are provided remotely and not from the customer's physical site unless explicitly specified in an SOW.",
-    "evidence": "It is clarified that unless otherwise specified in the SOW or agreed by the Parties in writing, the Vendor shall provide services remotely and not from the Company�s site.",
-    "source": "Master Services Agreement.docx"
+    "status": "verified",
+    "evidence": "It is clarified that unless otherwise specified in the SOW or agreed by the Parties in writing, the Vendor shall provide services remotely and not from the Company\u00ef\u00bf\u00bds site.",
+    "source": "Master Services Agreement.docx",
+    "confidence": "high"
   },
-  {
-    "id": 27,
-    "found": false,
-    "answer": "Not found in the provided documents.",
-    "evidence": "",
-    "source": ""
+  "27": {
+    "question_id": 27,
+    "answer": null,
+    "status": "unknown",
+    "evidence": null,
+    "source": null,
+    "confidence": null
   },
-  {
-    "id": 28,
-    "found": true,
+  "28": {
+    "question_id": 28,
     "answer": "Regodit tracks all endpoint devices and IT assets centrally on its internal compliance platform.",
+    "status": "verified",
     "evidence": "The company maintains its asset inventory on its internal compliance platform, which serves as the single record of assets in use.",
-    "source": "Regodit_asset_management_policy_v1.0.docx"
+    "source": "Regodit_asset_management_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 29,
-    "found": true,
+  "29": {
+    "question_id": 29,
     "answer": "Yes, endpoint devices require full-disk encryption, supported operating systems, native firewall/malware protection, screen locks, and strong authentication.",
-    "evidence": "Every device used for company work must have full-disk encryption enabled, must run a supported operating system kept current with security updates, must use the operating system�s native malware protection and firewall, and must be protected by a screen lock and strong authentication.",
-    "source": "Regodit_asset_management_policy_v1.0.docx"
+    "status": "verified",
+    "evidence": "Every device used for company work must have full-disk encryption enabled, must run a supported operating system kept current with security updates, must use the operating system\u00ef\u00bf\u00bds native malware protection and firewall, and must be protected by a screen lock and strong authentication.",
+    "source": "Regodit_asset_management_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 30,
-    "found": true,
+  "30": {
+    "question_id": 30,
     "answer": "Yes, Regodit provides an AI-native SaaS compliance automation web application.",
+    "status": "verified",
     "evidence": "The company provides an AI-native cybersecurity compliance automation platform designed to help businesses get compliant faster",
-    "source": "Regodit AI_SOC2_Type_II_Report_Test.docx"
+    "source": "Regodit AI_SOC2_Type_II_Report_Test.docx",
+    "confidence": "high"
   },
-  {
-    "id": 31,
-    "found": true,
+  "31": {
+    "question_id": 31,
     "answer": "The application is the Regodit Platform (Regodit AI Platform Application).",
+    "status": "verified",
     "evidence": "This report covers the Regodit Platform and the controls relevant to the Security, Availability, Confidentiality, Processing Integrity, and Privacy trust service criteria",
-    "source": "Regodit AI_SOC2_Type_II_Report_Test.docx"
+    "source": "Regodit AI_SOC2_Type_II_Report_Test.docx",
+    "confidence": "high"
   },
-  {
-    "id": 32,
-    "found": true,
+  "32": {
+    "question_id": 32,
     "answer": "The platform provides AI-powered collection, validation, and mapping of compliance evidence, readiness assessments, gap identification, policy development, continuous control monitoring, and audit support.",
+    "status": "verified",
     "evidence": "AI-powered collection, validation, and mapping of structured and unstructured evidence against applicable compliance controls. Readiness assessments, gap identification, remediation guidance, policy development, and compliance program implementation. Continuous monitoring of controls, risks, vendors, employee compliance activities, and audit readiness.",
-    "source": "Regodit AI_SOC2_Type_II_Report_Test.docx"
+    "source": "Regodit AI_SOC2_Type_II_Report_Test.docx",
+    "confidence": "high"
   },
-  {
-    "id": 33,
-    "found": true,
+  "33": {
+    "question_id": 33,
     "answer": "Vulnerabilities can be reported through Regodit's published contact channel, which are acknowledged, triaged, and handled under the Vulnerability and Patch Management Policy.",
+    "status": "verified",
     "evidence": "External parties, including customers and security researchers, may report a suspected vulnerability to the company through its published contact channel. Reports are acknowledged, triaged, and handled under this policy, and the reporter is kept informed of the outcome where appropriate.",
-    "source": "Regodit_vulnerability_and_patch_management_policy_v1.0.docx"
+    "source": "Regodit_vulnerability_and_patch_management_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 34,
-    "found": true,
+  "34": {
+    "question_id": 34,
     "answer": "Yes, certificate-based authentication and TLS certificates are utilized to secure external API and platform service communications.",
+    "status": "verified",
     "evidence": "Digital signatures and certificate-based authentication are used where the platform provides them, including TLS certificates for service authentication",
-    "source": "Regodit_cryptography_policy_v1.0.docx"
+    "source": "Regodit_cryptography_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 35,
-    "found": true,
+  "35": {
+    "question_id": 35,
     "answer": "Yes, authentication across systems is centralized through a single sign-on (SSO) identity provider protected by multi-factor authentication.",
+    "status": "verified",
     "evidence": "The policy is proportionate to a small, cloud-native, remote-first team in which most authentication is centralized through a single sign-on identity provider protected by multi-factor authentication.",
-    "source": "Regodit_password_and_secrets_policy_v1.0.docx"
+    "source": "Regodit_password_and_secrets_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 36,
-    "found": true,
+  "36": {
+    "question_id": 36,
     "answer": "Yes, Regodit maintains a Secure Development Policy and SDLC guidelines.",
+    "status": "verified",
     "evidence": "Principles for engineering secure systems shall be established, documented, maintained and applied to any information system implementation efforts.",
-    "source": "Secure Development Lifecycle Document 01.docx"
+    "source": "Secure Development Lifecycle Document 01.docx",
+    "confidence": "high"
   },
-  {
-    "id": 37,
-    "found": true,
-    "answer": "Yes, developers are required to adhere to coding standards covering security, commenting, and quality throughout the SDLC.",
-    "evidence": "Software developers are expected to adhere to Regodit�s coding standards throughout the development cycle, including standards for quality, commenting, and security.",
-    "source": "Secure Development Lifecycle Document 01.docx"
+  "37": {
+    "question_id": 37,
+    "answer": "Yes, developers follow secure coding practices including peer pull-request review before merge.",
+    "status": "verified",
+    "evidence": "Source code is managed in a version-control platform, and changes require peer pull-request review before merge; developers follow secure coding practices.",
+    "source": "Regodit_information_security_policy_v1.0.docx (Section 13)",
+    "confidence": "high"
   },
-  {
-    "id": 38,
-    "found": true,
-    "answer": "Yes, periodic vulnerability assessments are performed alongside continuous threat monitoring via AWS GuardDuty.",
-    "evidence": "Regodit AI performs periodic vulnerability assessments of system components. AWS GuardDuty provides continuous automated threat detection.",
-    "source": "Regodit AI_SOC2_Type_II_Report_Test.docx"
+  "38": {
+    "question_id": 38,
+    "answer": "No automated internal scanning program \u2014 relies on annual third-party penetration testing, AWS GuardDuty findings, and manual review.",
+    "status": "verified",
+    "evidence": "The company does not currently operate automated vulnerability scanning or an automated patch-management platform.",
+    "source": "Regodit_vulnerability_and_patch_management_policy_v1.0.docx (Section 3-4)",
+    "confidence": "high"
   },
-  {
-    "id": 39,
-    "found": true,
+  "39": {
+    "question_id": 39,
     "answer": "Vulnerability assessments and penetration testing are conducted at least annually and following major product or infrastructure changes.",
+    "status": "verified",
     "evidence": "Third-party vulnerability assessment and penetration testing, commissioned at least annually and additionally following a major change to the product or infrastructure.",
-    "source": "Regodit_vulnerability_and_patch_management_policy_v1.0.docx"
+    "source": "Regodit_vulnerability_and_patch_management_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 40,
-    "found": true,
+  "40": {
+    "question_id": 40,
     "answer": "Documented remediation timelines are: Critical vulnerabilities within 7 days; High vulnerabilities within 30 days.",
+    "status": "verified",
     "evidence": "Critical: Within 7 days | Prioritized over planned work. Where a vulnerability is being actively exploited or affects customer data, it is treated as an incident under the Incident Management Policy and addressed immediately. High: Within 30 days | Scheduled into the current work cycle.",
-    "source": "Regodit_vulnerability_and_patch_management_policy_v1.0.docx"
+    "source": "Regodit_vulnerability_and_patch_management_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 41,
-    "found": true,
+  "41": {
+    "question_id": 41,
     "answer": "Automated daily snapshots of production databases are maintained with 35-day retention and point-in-time recovery; disaster recovery restores data from backups and redeploys applications from source control into alternative availability zones.",
+    "status": "verified",
     "evidence": "Recovery is performed by restoring data from the most recent available backup, redeploying the application from source control and its stored configuration, verifying integrity and functionality before service is resumed, and monitoring closely afterwards for recurrence.",
-    "source": "Regodit_business_continuity_and_disaster_recovery_policy_v1.0.docx"
+    "source": "Regodit_business_continuity_and_disaster_recovery_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 42,
-    "found": true,
+  "42": {
+    "question_id": 42,
     "answer": "The BC/DR policy is documented in 'Regodit_business_continuity_and_disaster_recovery_policy_v1.0.docx' and 'BCP_DR_Plan_Solsphere.docx'.",
+    "status": "verified",
     "evidence": "Business Continuity and Disaster Recovery Policy Solsphere AI Inc. | Regodit",
-    "source": "Regodit_business_continuity_and_disaster_recovery_policy_v1.0.docx"
+    "source": "Regodit_business_continuity_and_disaster_recovery_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 43,
-    "found": true,
+  "43": {
+    "question_id": 43,
     "answer": "Yes, system activity, authentication events, and privileged actions are logged via cloud-native logging, and formal logs are kept for all SEV-0/SEV-1 security incidents.",
-    "evidence": "Access and privileged activity are logged using cloud-native logging. The cloud provider�s logging service retains logs for approximately one year, and logs shipped to object storage are retained on a long-term basis.",
-    "source": "Regodit_access_control_policy_v1.0.docx"
+    "status": "verified",
+    "evidence": "Access and privileged activity are logged using cloud-native logging. The cloud provider\u00ef\u00bf\u00bds logging service retains logs for approximately one year, and logs shipped to object storage are retained on a long-term basis.",
+    "source": "Regodit_access_control_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 44,
-    "found": false,
-    "answer": "Not found in the provided documents.",
-    "evidence": "",
-    "source": ""
+  "44": {
+    "question_id": 44,
+    "answer": null,
+    "status": "unknown",
+    "evidence": null,
+    "source": null,
+    "confidence": null
   },
-  {
-    "id": 45,
-    "found": true,
+  "45": {
+    "question_id": 45,
     "answer": "Yes, Regodit maintains an Incident Management Policy covering preparation, detection, containment, eradication, recovery, and post-incident review across severity levels SEV-0 to SEV-3.",
+    "status": "verified",
     "evidence": "This policy establishes the framework by which Solsphere identifies, classifies, responds to, communicates about, and learns from information security and availability incidents.",
-    "source": "Regodit_Incident_Management_Policy.docx"
+    "source": "Regodit_Incident_Management_Policy.docx",
+    "confidence": "high"
   },
-  {
-    "id": 46,
-    "found": true,
+  "46": {
+    "question_id": 46,
     "answer": "At least annually.",
+    "status": "verified",
     "evidence": "Review Cycle | Annual, or upon material change to systems, regulations, or organizational structure",
-    "source": "Regodit_Incident_Management_Policy.docx"
+    "source": "Regodit_Incident_Management_Policy.docx",
+    "confidence": "high"
   },
-  {
-    "id": 47,
-    "found": true,
+  "47": {
+    "question_id": 47,
     "answer": "Yes, client notification timelines for security incidents affecting client data or services are mandated in accordance with applicable contracts/DPAs.",
+    "status": "verified",
     "evidence": "Where an incident affects a client's data or service, Solsphere will notify the client in accordance with the notification timeline and method specified in the applicable client contract/DPA.",
-    "source": "Regodit_Incident_Management_Policy.docx"
+    "source": "Regodit_Incident_Management_Policy.docx",
+    "confidence": "high"
   },
-  {
-    "id": 48,
-    "found": false,
-    "answer": "Not found in the provided documents.",
-    "evidence": "",
-    "source": ""
+  "48": {
+    "question_id": 48,
+    "answer": null,
+    "status": "unknown",
+    "evidence": null,
+    "source": null,
+    "confidence": null
   },
-  {
-    "id": 49,
-    "found": true,
+  "49": {
+    "question_id": 49,
     "answer": "Security and internal audit functions are managed internally by the founders, though third-party firms are engaged for annual penetration testing.",
-    "evidence": "Given the company�s size, it does not maintain separate security, incident-response, disaster-recovery, or internal-audit teams. These functions are performed by the founders.",
-    "source": "Regodit_information_security_policy_v1.0.docx"
+    "status": "verified",
+    "evidence": "Given the company\u00ef\u00bf\u00bds size, it does not maintain separate security, incident-response, disaster-recovery, or internal-audit teams. These functions are performed by the founders.",
+    "source": "Regodit_information_security_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 50,
-    "found": true,
+  "50": {
+    "question_id": 50,
     "answer": "Yes, devices must utilize operating system native malware protection and firewall capabilities.",
-    "evidence": "must use the operating system�s native malware protection and firewall... The company does not deploy a separate commercial endpoint detection and response product; it relies on operating-system native protections",
-    "source": "Regodit_asset_management_policy_v1.0.docx"
+    "status": "verified",
+    "evidence": "must use the operating system\u00ef\u00bf\u00bds native malware protection and firewall... The company does not deploy a separate commercial endpoint detection and response product; it relies on operating-system native protections",
+    "source": "Regodit_asset_management_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 51,
-    "found": true,
+  "51": {
+    "question_id": 51,
     "answer": "Services are delivered remotely and not from the customer's site unless explicitly agreed in writing.",
-    "evidence": "It is clarified that unless otherwise specified in the SOW or agreed by the Parties in writing, the Vendor shall provide services remotely and not from the Company�s site.",
-    "source": "Master Services Agreement.docx"
+    "status": "verified",
+    "evidence": "It is clarified that unless otherwise specified in the SOW or agreed by the Parties in writing, the Vendor shall provide services remotely and not from the Company\u00ef\u00bf\u00bds site.",
+    "source": "Master Services Agreement.docx",
+    "confidence": "high"
   },
-  {
-    "id": 52,
-    "found": false,
-    "answer": "Not found in the provided documents.",
-    "evidence": "",
-    "source": ""
+  "52": {
+    "question_id": 52,
+    "answer": null,
+    "status": "unknown",
+    "evidence": null,
+    "source": null,
+    "confidence": null
   },
-  {
-    "id": 53,
-    "found": true,
+  "53": {
+    "question_id": 53,
     "answer": "Personnel recorded in the system access review record include: J. Martinez (j.martinez@regodit.net), A. Patel (a.patel@regodit.net), S. Wong (s.wong@regodit.net), R. Osei (r.osei@regodit.net), T. Nguyen (t.nguyen@regodit.net), M. Delgado (m.delgado@regodit.net), and K. O'Brien (k.obrien@regodit.net).",
+    "status": "verified",
     "evidence": "J. Martinez | j.martinez@regodit.net | Engineering | Admin | 08-29-26 | Y | N/A | N/A A. Patel | a.patel@regodit.net | Engineering | Editor | 09-01-26 | Y | N/A | N/A S. Wong | s.wong@regodit.net | IT Operations | Admin | 07-15-26 | N | Revoke access | Viewer R. Osei | r.osei@regodit.net | Finance | Viewer | 09-02-26 | Y | N/A | N/A T. Nguyen | t.nguyen@regodit.net | Engineering | Editor | 05-10-26 | N | Change access | Viewer M. Delgado | m.delgado@regodit.net | Contractor - IT Support | Admin | 03-22-26 | N | Revoke access | N/A K. O'Brien | k.obrien@regodit.net | Security | Admin | 09-03-26 | Y | N/A | N/A",
-    "source": "Access_Review_Records.xlsx"
+    "source": "Access_Review_Records.xlsx",
+    "confidence": "high"
   },
-  {
-    "id": 54,
-    "found": true,
+  "54": {
+    "question_id": 54,
     "answer": "Network perimeter access is restricted using cloud-native firewalls and security groups; endpoint devices require OS-native firewalls, malware protection, full-disk encryption, and remote access via VPN.",
+    "status": "verified",
     "evidence": "Network access is controlled using cloud-native firewalls configured to restrict inbound traffic. Production and non-production environments are separated at the cloud account level. Remote access to internal resources is being consolidated onto the company VPN; this rollout is in progress.",
-    "source": "Regodit_information_security_policy_v1.0.docx"
+    "source": "Regodit_information_security_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 55,
-    "found": true,
+  "55": {
+    "question_id": 55,
     "answer": "Yes, an IT asset and software inventory is maintained on the internal compliance platform.",
+    "status": "verified",
     "evidence": "The company maintains its asset inventory on its internal compliance platform, which serves as the single record of assets in use.",
-    "source": "Regodit_asset_management_policy_v1.0.docx"
+    "source": "Regodit_asset_management_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 56,
-    "found": true,
+  "56": {
+    "question_id": 56,
     "answer": "Yes, identity and access controls are established under the Access Control Policy.",
-    "evidence": "This Access Control Policy establishes how access to the company�s information systems, applications, and data is granted, managed, and revoked, following the principles of least privilege and need-to-know.",
-    "source": "Regodit_access_control_policy_v1.0.docx"
+    "status": "verified",
+    "evidence": "This Access Control Policy establishes how access to the company\u00ef\u00bf\u00bds information systems, applications, and data is granted, managed, and revoked, following the principles of least privilege and need-to-know.",
+    "source": "Regodit_access_control_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 57,
-    "found": true,
+  "57": {
+    "question_id": 57,
     "answer": "Yes, access is provisioned using role-based access controls via AWS IAM and SSO.",
+    "status": "verified",
     "evidence": "Access to the production environment is provisioned through AWS IAM with role-based, least-privilege assignments.",
-    "source": "Regodit AI_SOC2_Type_II_Report_Test.docx"
+    "source": "Regodit AI_SOC2_Type_II_Report_Test.docx",
+    "confidence": "high"
   },
-  {
-    "id": 58,
-    "found": true,
+  "58": {
+    "question_id": 58,
     "answer": "Yes, user access privileges are granted on a least-privilege basis and reviewed periodically.",
-    "evidence": "Access to all systems is reviewed at least annually across all users to confirm that privileges remain appropriate to each person�s role.",
-    "source": "Regodit_access_control_policy_v1.0.docx"
+    "status": "verified",
+    "evidence": "Access to all systems is reviewed at least annually across all users to confirm that privileges remain appropriate to each person\u00ef\u00bf\u00bds role.",
+    "source": "Regodit_access_control_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 59,
-    "found": true,
+  "59": {
+    "question_id": 59,
     "answer": "At least annually.",
-    "evidence": "Access to all systems is reviewed at least annually across all users to confirm that privileges remain appropriate to each person�s role.",
-    "source": "Regodit_access_control_policy_v1.0.docx"
+    "status": "verified",
+    "evidence": "Access to all systems is reviewed at least annually across all users to confirm that privileges remain appropriate to each person\u00ef\u00bf\u00bds role.",
+    "source": "Regodit_access_control_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 60,
-    "found": true,
+  "60": {
+    "question_id": 60,
     "answer": "Yes, multi-factor authentication (MFA) is enforced across all core systems and cloud consoles.",
+    "status": "verified",
     "evidence": "Multi-factor authentication is enforced across all core systems, including cloud infrastructure consoles, the identity and email provider, and the source-code platform.",
-    "source": "Regodit_access_control_policy_v1.0.docx"
+    "source": "Regodit_access_control_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 61,
-    "found": true,
+  "61": {
+    "question_id": 61,
     "answer": "Yes, authentication and password policies align with NIST SP 800-63B standards.",
-    "evidence": "This policy supports the company�s SOC 2 objectives and aligns with NIST SP 800-63B.",
-    "source": "Regodit_password_and_secrets_policy_v1.0.docx"
+    "status": "verified",
+    "evidence": "This policy supports the company\u00ef\u00bf\u00bds SOC 2 objectives and aligns with NIST SP 800-63B.",
+    "source": "Regodit_password_and_secrets_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 62,
-    "found": true,
+  "62": {
+    "question_id": 62,
     "answer": "Yes, Regodit strictly enforces the principle of least privilege.",
-    "evidence": "This Access Control Policy establishes how access to the company�s information systems, applications, and data is granted, managed, and revoked, following the principles of least privilege and need-to-know.",
-    "source": "Regodit_access_control_policy_v1.0.docx"
+    "status": "verified",
+    "evidence": "This Access Control Policy establishes how access to the company\u00ef\u00bf\u00bds information systems, applications, and data is granted, managed, and revoked, following the principles of least privilege and need-to-know.",
+    "source": "Regodit_access_control_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 63,
-    "found": true,
+  "63": {
+    "question_id": 63,
     "answer": "Yes, information security risk assessments and risk register updates are conducted at least annually.",
+    "status": "verified",
     "evidence": "The risk register is reviewed and updated at least annually, and immediately following any significant incident, new system or vendor onboarding, or material change to the business.",
-    "source": "Regodit_risk_management_policy_v1.0.docx"
+    "source": "Regodit_risk_management_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 64,
-    "found": true,
+  "64": {
+    "question_id": 64,
     "answer": "Critical assets are prioritized based on the sensitivity and classification level (Confidential/Restricted) of the data they store or process.",
+    "status": "verified",
     "evidence": "Assets are classified according to the sensitivity of the data they hold or access, using the classification levels defined in the Data Classification Policy. Assets that store or process Confidential or Restricted data are subject to the strongest protection requirements, including encryption and restricted access.",
-    "source": "Regodit_asset_management_policy_v1.0.docx"
+    "source": "Regodit_asset_management_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 65,
-    "found": true,
+  "65": {
+    "question_id": 65,
     "answer": "Yes, third-party penetration testing is commissioned at least annually.",
+    "status": "verified",
     "evidence": "Third-party vulnerability assessment and penetration testing, commissioned at least annually and additionally following a major change to the product or infrastructure.",
-    "source": "Regodit_vulnerability_and_patch_management_policy_v1.0.docx"
+    "source": "Regodit_vulnerability_and_patch_management_policy_v1.0.docx",
+    "confidence": "high"
   },
-  {
-    "id": 66,
-    "found": true,
+  "66": {
+    "question_id": 66,
     "answer": "Findings from the most recent penetration test report are currently marked as Open and scheduled for remediation.",
+    "status": "verified",
     "evidence": "Remediation of critical/high findings should occur immediately, with scheduled fixes for remaining items.",
-    "source": "VAPT Report 01.docx"
+    "source": "VAPT Report 01.docx",
+    "confidence": "high"
   }
-]
+}

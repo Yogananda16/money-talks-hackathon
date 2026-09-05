@@ -255,9 +255,9 @@
     "topic": "Network & Endpoint Security"
   },
   {
-    "id": 52,
-    "question": 52.0,
-    "topic": "Network & Endpoint Security"
+  "id": 52,
+  "question": "Will you be using a Client XYZ asset to access Client XYZ's network?",
+  "topic": "Network & Endpoint Security"
   },
   {
     "id": 53,
