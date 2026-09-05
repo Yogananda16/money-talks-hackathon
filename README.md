@@ -6,8 +6,7 @@ Built for the **Regodit track: AI Security Analyst**.
 
 **Live:** https://money-talks-hackathon.vercel.app/
 
-![IRIS](<img width="1438" height="852" alt="image" src="https://github.com/user-attachments/assets/5014dbb1-de41-44fa-abb8-11dfa3d86a64" />
-)
+<img width="1438" height="852" alt="image" src="https://github.com/user-attachments/assets/a2bcc392-7334-4d8c-bfb3-eb1de4b3ea36" />
 
 ## Problem
 
