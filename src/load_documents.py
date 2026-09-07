@@ -1,78 +1,134 @@
 import os
-from pathlib import Path
-
-import docx
+from docx import Document
 import openpyxl
 from pypdf import PdfReader
+from PIL import Image
+import torch
+from transformers import AutoModelForImageTextToText, AutoProcessor
 
-DOCS_DIR = Path(__file__).parent.parent / "documents"
-QUESTIONNAIRE_FILENAME = "Regodit_Comprehensive_Vendor_Security_Questionnaire_Clean.xlsx"
+DOCS_DIR = "documents"  # <- confirm this matches your actual folder
+VL_MODEL_NAME = "Qwen/Qwen3-VL-8B-Instruct"
 
-
-def load_docx(path):
-    doc = docx.Document(path)
-    return "\n".join(p.text for p in doc.paragraphs if p.text.strip())
-
-
-def load_xlsx(path):
-    wb = openpyxl.load_workbook(path, data_only=True)
-    lines = []
-    for sheet in wb.sheetnames:
-        ws = wb[sheet]
-        for row in ws.iter_rows(values_only=True):
-            values = [str(v) for v in row if v is not None]
-            if values:
-                lines.append(" | ".join(values))
-    return "\n".join(lines)
+_vl_model = None
+_vl_processor = None
 
 
-def load_pdf(path):
-    reader = PdfReader(path)
-    return "\n".join(page.extract_text() or "" for page in reader.pages)
+def get_vl_model():
+    """Lazy-load the vision model — only loads into memory if an image actually needs it."""
+    global _vl_model, _vl_processor
+    if _vl_model is None:
+        print("Loading Qwen3-VL for diagram analysis (first image only)...")
+        _vl_processor = AutoProcessor.from_pretrained(VL_MODEL_NAME)
+        _vl_model = AutoModelForImageTextToText.from_pretrained(
+            VL_MODEL_NAME, torch_dtype=torch.bfloat16, device_map="auto"
+        )
+    return _vl_model, _vl_processor
 
 
-def load_all_documents():
+def describe_diagram(filepath):
+    model, processor = get_vl_model()
+    image = Image.open(filepath)
+
+    messages = [{
+        "role": "user",
+        "content": [
+            {"type": "image", "image": image},
+            {"type": "text", "text": (
+                "This is a diagram from a company's security documentation. "
+                "Describe every security control, access path, data flow, and "
+                "component shown, in enough detail to answer a vendor security "
+                "questionnaire. Be literal about what's in the image — don't "
+                "infer controls that aren't visibly shown."
+            )}
+        ]
+    }]
+
+    inputs = processor.apply_chat_template(
+        messages, tokenize=True, add_generation_prompt=True, return_tensors="pt"
+    ).to(model.device)
+
+    output = model.generate(inputs, max_new_tokens=500)
+    return processor.decode(output[0], skip_special_tokens=True)
+
+
+def load_docx(filepath):
+    doc = Document(filepath)
+    parts = []
+
+    for para in doc.paragraphs:
+        if para.text.strip():
+            parts.append(para.text.strip())
+
+    for table in doc.tables:
+        for row in table.rows:
+            cells = [cell.text.strip() for cell in row.cells]
+            if any(cells):
+                parts.append(" | ".join(cells))
+
+    return "\n\n".join(parts)
+
+
+def load_xlsx(filepath):
+    wb = openpyxl.load_workbook(filepath, data_only=True)
+    parts = []
+
+    for sheet in wb.worksheets:
+        parts.append(f"Sheet: {sheet.title}")
+        for row in sheet.iter_rows(values_only=True):
+            cells = [str(c).strip() for c in row if c is not None]
+            if cells:
+                parts.append(" | ".join(cells))
+
+    return "\n\n".join(parts)
+
+
+def load_pdf(filepath):
+    reader = PdfReader(filepath)
+    parts = []
+
+    for page in reader.pages:
+        text = page.extract_text()
+        if text and text.strip():
+            parts.append(text.strip())
+
+    return "\n\n".join(parts)
+
+
+def load_documents():
     documents = []
-    for file in DOCS_DIR.iterdir():
-        if file.is_dir():
-            continue
-        if file.name == QUESTIONNAIRE_FILENAME:
-            continue  # this is the form being filled out, not evidence
 
-        ext = file.suffix.lower()
+    for filename in os.listdir(DOCS_DIR):
+        filepath = os.path.join(DOCS_DIR, filename)
+        ext = filename.lower().split(".")[-1]
         text = ""
-        readable = True
 
         try:
-            if ext == ".docx":
-                text = load_docx(file)
-            elif ext == ".xlsx":
-                text = load_xlsx(file)
-            elif ext == ".pdf":
-                text = load_pdf(file)
-            elif ext in (".png", ".jpg", ".jpeg"):
-                text = ""  # images: no text extraction, handled below
+            if ext == "docx":
+                text = load_docx(filepath)
+            elif ext == "xlsx":
+                text = load_xlsx(filepath)
+            elif ext == "pdf":
+                text = load_pdf(filepath)
+            elif ext in ("png", "jpg", "jpeg"):
+                text = describe_diagram(filepath)
             else:
-                continue  # unsupported file type, skip entirely
+                continue  # skip unrecognized file types
         except Exception as e:
-            print(f"Could not read {file.name}: {e}")
-            readable = False
+            print(f"Error reading {filename}: {e}")
+            continue
 
-        if not readable or not text.strip():
-            text = (
-                f"[Attachment: {file.name} — exists as supporting evidence, "
-                f"but its content was not text-extracted (scanned, image-based, "
-                f"a diagram, or unreadable). Reference by filename.]"
-            )
-            print(f"No extractable text in {file.name} — added as filename-only evidence")
+        if not text.strip():
+            print(f"No extractable content in {filename} — added as filename-only evidence")
+            text = f"[Document: {filename} — content not extractable. File exists as evidence but requires manual review.]"
 
-        documents.append({"filename": file.name, "text": text})
+        documents.append({"filename": filename, "text": text})
 
     return documents
 
 
 if __name__ == "__main__":
-    docs = load_all_documents()
-    print(f"\nLoaded {len(docs)} documents:")
-    for d in docs:
-        print(f" - {d['filename']}: {len(d['text'])} characters")
+    docs = load_documents()
+    print(f"Loaded {len(docs)} documents.")
+    for d in docs[:3]:
+        print(f"\n{d['filename']}:")
+        print(d["text"][:300])
