@@ -2,3 +2,6 @@
 .env
 documents/
 documents/extracted/
+venv/
+__pycache__/
+*.pyc
