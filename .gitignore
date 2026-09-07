@@ -5,3 +5,4 @@ documents/extracted/
 venv/
 __pycache__/
 *.pyc
+chroma_db/
