@@ -1,54 +1,29 @@
 import os
+import ollama
 from docx import Document
 import openpyxl
 from pypdf import PdfReader
-from PIL import Image
-import torch
-from transformers import AutoModelForImageTextToText, AutoProcessor
 
-DOCS_DIR = "documents"  # <- confirm this matches your actual folder
-VL_MODEL_NAME = "Qwen/Qwen3-VL-8B-Instruct"
-
-_vl_model = None
-_vl_processor = None
-
-
-def get_vl_model():
-    """Lazy-load the vision model — only loads into memory if an image actually needs it."""
-    global _vl_model, _vl_processor
-    if _vl_model is None:
-        print("Loading Qwen3-VL for diagram analysis (first image only)...")
-        _vl_processor = AutoProcessor.from_pretrained(VL_MODEL_NAME)
-        _vl_model = AutoModelForImageTextToText.from_pretrained(
-            VL_MODEL_NAME, torch_dtype=torch.bfloat16, device_map="auto"
-        )
-    return _vl_model, _vl_processor
+DOCS_DIR = "documents"
+VL_MODEL_NAME = "qwen3-vl:2b"  # matches what you actually pulled
 
 
 def describe_diagram(filepath):
-    model, processor = get_vl_model()
-    image = Image.open(filepath)
-
-    messages = [{
-        "role": "user",
-        "content": [
-            {"type": "image", "image": image},
-            {"type": "text", "text": (
+    response = ollama.chat(
+        model=VL_MODEL_NAME,
+        messages=[{
+            "role": "user",
+            "content": (
                 "This is a diagram from a company's security documentation. "
                 "Describe every security control, access path, data flow, and "
                 "component shown, in enough detail to answer a vendor security "
                 "questionnaire. Be literal about what's in the image — don't "
                 "infer controls that aren't visibly shown."
-            )}
-        ]
-    }]
-
-    inputs = processor.apply_chat_template(
-        messages, tokenize=True, add_generation_prompt=True, return_tensors="pt"
-    ).to(model.device)
-
-    output = model.generate(inputs, max_new_tokens=500)
-    return processor.decode(output[0], skip_special_tokens=True)
+            ),
+            "images": [filepath]
+        }]
+    )
+    return response["message"]["content"]
 
 
 def load_docx(filepath):
@@ -112,7 +87,7 @@ def load_documents():
             elif ext in ("png", "jpg", "jpeg"):
                 text = describe_diagram(filepath)
             else:
-                continue  # skip unrecognized file types
+                continue
         except Exception as e:
             print(f"Error reading {filename}: {e}")
             continue

@@ -1,0 +1,327 @@
+[
+  {
+    "id": 1,
+    "topic": "Governance",
+    "question": "Does your organization have a formal Information Security Program established?"
+  },
+  {
+    "id": 2,
+    "topic": "Governance",
+    "question": "Does your organization have a published set of Information Security policies, standards and procedures?"
+  },
+  {
+    "id": 3,
+    "topic": "Governance",
+    "question": "Does your organization have a public information security policy?"
+  },
+  {
+    "id": 4,
+    "topic": "Governance",
+    "question": "Does your organization document role descriptions including relevant cybersecurity & data protection responsibilities?"
+  },
+  {
+    "id": 5,
+    "topic": "Governance",
+    "question": "Is there a procedure in place for overseeing cybersecurity and data protection controls, that includes how issues are escalated to leadership?"
+  },
+  {
+    "id": 6,
+    "topic": "Third-Party Risk Management",
+    "question": "Will you be using any contractors or sub-contractors to complete the engagement with Client XYZ?"
+  },
+  {
+    "id": 7,
+    "topic": "Third-Party Risk Management",
+    "question": "Do you have a third-party risk management program/policy in place?"
+  },
+  {
+    "id": 8,
+    "topic": "Third-Party Risk Management",
+    "question": "Please attach your Third-Party Risk Management Policy."
+  },
+  {
+    "id": 9,
+    "topic": "Third-Party Risk Management",
+    "question": "Does your third-party risk management program include supply chain protections?"
+  },
+  {
+    "id": 10,
+    "topic": "Third-Party Risk Management",
+    "question": "Do your vendor and subcontractor agreements include clauses requiring adherence to cybersecurity and data privacy standards, and do these requirements flow down to all applicable subcontractors and suppliers?"
+  },
+  {
+    "id": 11,
+    "topic": "Security Awareness & Training",
+    "question": "Do you provide security awareness training at onboarding and at least annually thereafter for all personnel including contractors?"
+  },
+  {
+    "id": 12,
+    "topic": "Security Awareness & Training",
+    "question": "How frequently are employees trained on policies in your organization?"
+  },
+  {
+    "id": 13,
+    "topic": "Security Awareness & Training",
+    "question": "Does your organization provide role based security awareness training at least annually?"
+  },
+  {
+    "id": 14,
+    "topic": "Privacy",
+    "question": "Does your organization have privacy controls and or Data Privacy program in place?"
+  },
+  {
+    "id": 15,
+    "topic": "Privacy",
+    "question": "Will your personnel or your product require access to sensitive data (i.e PII, PI, PHI) to complete the engagement with Regodit?"
+  },
+  {
+    "id": 16,
+    "topic": "Privacy",
+    "question": "Please provide a copy of your data retention schedule and secure disposal procedures"
+  },
+  {
+    "id": 17,
+    "topic": "Privacy",
+    "question": "Do you have a privacy policy in place? If so, please provide the attachment or URL."
+  },
+  {
+    "id": 18,
+    "topic": "Privacy",
+    "question": "Does your organization ensure privacy requirements are extended to contractors and service providers through contractual agreements, and that roles and responsibilities concerning data privacy are clearly understood and documented?"
+  },
+  {
+    "id": 19,
+    "topic": "Data Security",
+    "question": "Do you, or any third party you use to deliver services to Client XYZ, store sensitive information outside the United States? If so, where?"
+  },
+  {
+    "id": 20,
+    "topic": "Data Security",
+    "question": "Do you require data-at-rest encryption for sensitive data?"
+  },
+  {
+    "id": 21,
+    "topic": "Data Security",
+    "question": "Do you require data-in-transit encryption for sensitive data? If so, please describe the encryption protocols used."
+  },
+  {
+    "id": 22,
+    "topic": "Data Security",
+    "question": "Will Regodit data be stored on site, in a data center, or by a third party?"
+  },
+  {
+    "id": 23,
+    "topic": "Data Security",
+    "question": "Do you have data retention policies and procedures for the secure disposal of information?"
+  },
+  {
+    "id": 24,
+    "topic": "Data Security",
+    "question": "If providing a product or SaaS platform that will access, store, or process Client XYZ data, are you able to provide applicable data flow diagrams showing how Regodit's data will flow through the tool upon request?"
+  },
+  {
+    "id": 25,
+    "topic": "Physical Security",
+    "question": "Is there a policy in place for physical security requirements for your business?"
+  },
+  {
+    "id": 26,
+    "topic": "Physical Security",
+    "question": "Do you require physical access to any Client XYZ locations to complete your engagement?"
+  },
+  {
+    "id": 27,
+    "topic": "Physical Security",
+    "question": "Are you willing to accept and acknowledge the expectations outlined in Client XYZ's Visitor Management document?"
+  },
+  {
+    "id": 28,
+    "topic": "Physical Security",
+    "question": "Does your organization have procedures in place to track assets that are brought onto Client XYZ sites?"
+  },
+  {
+    "id": 29,
+    "topic": "Physical Security",
+    "question": "Can you provide your organization's data protection policy, including evidence of physical safeguards for devices used onsite if requested?"
+  },
+  {
+    "id": 30,
+    "topic": "Web Application Security",
+    "question": "Will Client XYZ be using a web application provided by you?"
+  },
+  {
+    "id": 31,
+    "topic": "Web Application Security",
+    "question": "What is the name of your web application?"
+  },
+  {
+    "id": 32,
+    "topic": "Web Application Security",
+    "question": "What is the function/purpose of your web application?"
+  },
+  {
+    "id": 33,
+    "topic": "Web Application Security",
+    "question": "How do you report application security vulnerabilities?"
+  },
+  {
+    "id": 34,
+    "topic": "Web Application Security",
+    "question": "Does your web application have an SSL/TLS certificate?"
+  },
+  {
+    "id": 35,
+    "topic": "Web Application Security",
+    "question": "Does your application offer single sign-on (SSO) or are there plans to implement/offer SSO in the near future? If plans to implement in near future, include an implementation date in your justification."
+  },
+  {
+    "id": 36,
+    "topic": "Secure Coding",
+    "question": "Do you have policies, procedures or standards in place for secure development practices?"
+  },
+  {
+    "id": 37,
+    "topic": "Secure Coding",
+    "question": "Do you utilize Secure Coding Principles - (Detailed logging, encrypted credentials, etc.)?"
+  },
+  {
+    "id": 38,
+    "topic": "Vulnerability Management",
+    "question": "Are internal vulnerability scans performed?"
+  },
+  {
+    "id": 39,
+    "topic": "Vulnerability Management",
+    "question": "On what cadence are vulnerability scans performed?"
+  },
+  {
+    "id": 40,
+    "topic": "Vulnerability Management",
+    "question": "What are the documented remediation timelines for critical and high patches?"
+  },
+  {
+    "id": 41,
+    "topic": "Business Continuity & Disaster Recovery",
+    "question": "What is the process for disaster recovery and backups?"
+  },
+  {
+    "id": 42,
+    "topic": "Business Continuity & Disaster Recovery",
+    "question": "Please provide a copy of your BC/DR policy for review."
+  },
+  {
+    "id": 43,
+    "topic": "Incident Response",
+    "question": "Do you keep a record of security events?"
+  },
+  {
+    "id": 44,
+    "topic": "Incident Response",
+    "question": "Do you monitor the security of your wireless networks?"
+  },
+  {
+    "id": 45,
+    "topic": "Incident Response",
+    "question": "Do you have an incident response plan in place? If yes, describe briefly."
+  },
+  {
+    "id": 46,
+    "topic": "Incident Response",
+    "question": "How often is your Incident Response Plan Tested?(Drop Down)"
+  },
+  {
+    "id": 47,
+    "topic": "Incident Response",
+    "question": "Do you have a policy requiring prompt notice to third parties regarding information security events affecting your organization?"
+  },
+  {
+    "id": 48,
+    "topic": "Incident Response",
+    "question": "Regardless of materiality, have you had a security event in the last 5 years?"
+  },
+  {
+    "id": 49,
+    "topic": "Incident Response",
+    "question": "Do you outsource security functions to third-party providers?"
+  },
+  {
+    "id": 50,
+    "topic": "Network & Endpoint Security",
+    "question": "Do you use anti virus software to protect your devices? If yes, describe."
+  },
+  {
+    "id": 51,
+    "topic": "Network & Endpoint Security",
+    "question": "Will your organization be accessing Client XYZ's network?"
+  },
+  {
+    "id": 53,
+    "topic": "Network & Endpoint Security",
+    "question": "Please list out all authorized personnel, including first and last names and e-mail addresses from your organization that will have access to Client XYZ's assets or network."
+  },
+  {
+    "id": 54,
+    "topic": "Network & Endpoint Security",
+    "question": "Please submit a network architecture diagram and details of your endpoint protection measures, including how your organization complies with firewall and DNS security standards when accessing XYZ's networks."
+  },
+  {
+    "id": 55,
+    "topic": "Asset Management",
+    "question": "Do you keep an inventory of information technology (IT) assets and software?"
+  },
+  {
+    "id": 56,
+    "topic": "Asset Management",
+    "question": "Does your organization have identity and access controls in place?"
+  },
+  {
+    "id": 57,
+    "topic": "Asset Management",
+    "question": "Does your organization leverage role-based access control?"
+  },
+  {
+    "id": 58,
+    "topic": "Asset Management",
+    "question": "Do you limit and periodically review user access privileges and controls?"
+  },
+  {
+    "id": 59,
+    "topic": "Asset Management",
+    "question": "What is the cadence of your access reviews?(Drop Down)"
+  },
+  {
+    "id": 60,
+    "topic": "Asset Management",
+    "question": "Does your organization require replay-resistant authentication mechanisms such as OTP or MFA?"
+  },
+  {
+    "id": 61,
+    "topic": "Asset Management",
+    "question": "Are the external authenticators in use, NIST compliant?"
+  },
+  {
+    "id": 62,
+    "topic": "Asset Management",
+    "question": "Does your organization enforce the principle of least privilege?"
+  },
+  {
+    "id": 63,
+    "topic": "Risk Assessment",
+    "question": "Do you conduct information security risk assessments at least annually?"
+  },
+  {
+    "id": 64,
+    "topic": "Risk Assessment",
+    "question": "How do you prioritize critical assets for your organization?"
+  },
+  {
+    "id": 65,
+    "topic": "Risk Assessment",
+    "question": "Does your organization conduct penetration testing at least annually?"
+  },
+  {
+    "id": 66,
+    "topic": "Risk Assessment",
+    "question": "Have the findings from the most recent penetration test been remediated?"
+  }
+]
