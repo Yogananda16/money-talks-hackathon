@@ -23,48 +23,88 @@ def already_known(profile, question_id):
     return entry is not None and entry["status"] in ("verified", "confirmed_by_user")
 
 
+def correct_answer(profile, question_id, new_answer):
+    key = str(question_id)
+    existing = profile.get(key)
+    if existing is None:
+        print(f"  No existing entry for question {question_id} — nothing to correct.")
+        return
+
+    history = existing.get("history", [])
+    history.append({
+        "previous_status": existing["status"],
+        "previous_answer": existing["answer"],
+        "previous_sources": existing.get("sources", [])
+    })
+
+    profile[key] = {
+        **existing,
+        "status": "confirmed_by_user",
+        "answer": new_answer,
+        "sources": ["employee (correction)"],
+        "confidence": 1.0,
+        "history": history
+    }
+    save_profile(profile)
+    print(f"  Updated. Previous answer preserved in history ({len(history)} correction(s) total).")
+
+
 def search_and_answer(topic, question_text):
-    """Search company data -> Complete, evidence-backed answer?"""
+    """Search company data -> Complete, evidence-backed answer?
+    The LLM decides ANSWERED vs UNKNOWN itself — the code trusts that
+    signal instead of assuming 'evidence exists' means 'question answered'."""
     search_query = build_search_query(topic, question_text)
-    candidates = hybrid_search(search_query, k=15)
+    candidates = hybrid_search(search_query)
     evidence = rerank(search_query, candidates)
 
     if not evidence:
-        return None  # no confident evidence — triggers the "ask employee" branch
+        return None  # no confident evidence at all — ask employee
 
     context = "\n\n---\n\n".join(text for text, score in evidence)
     topic_line = f"This question is under the '{topic}' section of a vendor security questionnaire.\n" if topic else ""
+
     prompt = f"""You are a security analyst answering a vendor security questionnaire.
-{topic_line}Answer using ONLY the evidence below. If it doesn't clearly answer the question,
-say so explicitly instead of guessing.
+{topic_line}Answer using ONLY the evidence below.
+
+Your reply's FIRST LINE must be exactly one of:
+STATUS: ANSWERED
+STATUS: UNKNOWN
+
+Use STATUS: UNKNOWN if the evidence does not clearly and directly answer the question.
+Do not guess, do not partially answer, do not speculate — say UNKNOWN instead.
+
+If ANSWERED, follow with a direct answer grounded only in the evidence.
+If UNKNOWN, follow with one short sentence on what's missing.
 
 Evidence:
 {context}
 
-Question: {question_text}
+Question: {question_text}"""
 
-Give a direct answer grounded only in the evidence above."""
+    raw = ask_ollama(prompt)
+    lines = raw.strip().split("\n", 1)
+    status_line = lines[0].strip().upper()
+    body = lines[1].strip() if len(lines) > 1 else raw.strip()
 
-    answer = ask_ollama(prompt)
+    if "UNKNOWN" in status_line:
+        return None  # LLM itself says it can't answer -> treat exactly like no-evidence, ask employee
+
     avg_score = sum(s for _, s in evidence) / len(evidence)
-
     return {
-        "answer": answer,
+        "answer": body,
         "sources": extract_sources(evidence),
         "evidence": [t for t, s in evidence],
-        "confidence": round(float(avg_score), 2)  # rough proxy, not a calibrated probability yet
+        "confidence": round(float(avg_score), 2)
     }
 
 
 def ask_employee(question_text):
-    """Ask employee / follow-up — CLI stand-in for the future chat UI."""
-    print(f"\n🧑\u200d💼 Couldn't find this in the documents — can you answer?")
+    print(f"\n🧑\u200d💼 Couldn't find a confirmed answer in the documents — can you answer?")
     print(f"   {question_text}")
     return input("   Your answer: ").strip()
 
 
 def needs_followup(question_text, answer):
-    """Smart follow-up: LLM decides if the employee's answer is complete or too vague."""
     prompt = f"""A security questionnaire question was asked, and an employee gave a short answer.
 Question: {question_text}
 Employee's answer: {answer}
@@ -88,11 +128,12 @@ def process_question(profile, question_id, topic, question_text):
 
     if result:
         print(f"  Found evidence -> {result['sources']}")
+        print(f"  Answer: {result['answer'][:200]}...")
         profile[str(question_id)] = {
             "id": question_id, "topic": topic, "question": question_text,
             "status": "verified", "answer": result["answer"],
             "sources": result["sources"], "confidence": result["confidence"],
-            "evidence": result["evidence"]
+            "evidence": result["evidence"], "history": []
         }
     else:
         answer = ask_employee(question_text)
@@ -106,15 +147,38 @@ def process_question(profile, question_id, topic, question_text):
         profile[str(question_id)] = {
             "id": question_id, "topic": topic, "question": question_text,
             "status": "confirmed_by_user", "answer": answer,
-            "sources": ["employee"], "confidence": 1.0, "evidence": []
+            "sources": ["employee"], "confidence": 1.0, "evidence": [], "history": []
         }
 
     save_profile(profile)
 
 
-def run():
+def correction_menu(profile):
+    print("\n--- Correction menu ---")
+    print("Enter a question ID to view/correct it, or 'done' to finish.")
+    while True:
+        choice = input("\nQuestion ID (or 'done'): ").strip()
+        if choice.lower() == "done":
+            break
+        entry = profile.get(choice)
+        if entry is None:
+            print(f"  No stored answer for question {choice} yet.")
+            continue
+        print(f"  Current status: {entry['status']}")
+        print(f"  Current answer: {entry['answer']}")
+        print(f"  Source: {entry.get('sources')}")
+        new_answer = input("  New answer (or press Enter to leave unchanged): ").strip()
+        if new_answer:
+            correct_answer(profile, choice, new_answer)
+
+
+def run(limit=None):
     with open("questions.json") as f:
         questions = json.load(f)
+
+    if limit:
+        questions = questions[:limit]
+        print(f"Running on first {limit} question(s) only.\n")
 
     profile = load_profile()
 
@@ -129,6 +193,8 @@ def run():
     confirmed = sum(1 for p in profile.values() if p["status"] == "confirmed_by_user")
     print(f"\nDone. {verified} verified from documents, {confirmed} confirmed by employee.")
 
+    correction_menu(profile)
+
 
 if __name__ == "__main__":
-    run()
+    run(limit=5)

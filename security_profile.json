@@ -1,0 +1,66 @@
+{
+  "1": {
+    "id": 1,
+    "topic": "Governance",
+    "question": "Does your organization have a formal Information Security Program established?",
+    "status": "verified",
+    "answer": "The evidence does not clearly answer the question. The provided excerpt describes a formal information security awareness training program and security responsibilities as a core component, but it does not explicitly state or confirm the existence of a formal Information Security Program (the entire program). The evidence focuses on specific components (e.g., training) and security responsibilities without addressing the comprehensive structure, policies, or framework of an overall Information Security Program.",
+    "sources": [
+      "Regodit_hr_policy_v1.0.docx"
+    ],
+    "confidence": 1.19,
+    "evidence": [
+      "[Regodit_hr_policy_v1.0.docx]\nive recognition for high performance, and are accountable for any deviations or compliance failures.\n\nSecurity responsibilities are a core component of the evaluation framework, and persistent failure to meet these standards may result in corrective action, retraining, or disciplinary procedures.\n\n6. Training and Awareness\n\nAll personnel, including contractors and third-party users with access to critical systems or data, must complete a formal information security awareness training program upon joining the organization. This training covers key areas such as password hygiene, phishing awareness, secure data handling, and regulatory compliance."
+    ]
+  },
+  "2": {
+    "id": 2,
+    "topic": "Governance",
+    "question": "Does your organization have a published set of Information Security policies, standards and procedures?",
+    "status": "verified",
+    "answer": "Yes.",
+    "sources": [
+      "Regodit AI_SOC2_Type_II_Report_Test.docx",
+      "Secure Development Lifecycle Document 01.docx"
+    ],
+    "confidence": 3.04,
+    "evidence": [
+      "[Regodit AI_SOC2_Type_II_Report_Test.docx]\nm the GRC platform. We verified the parameters used to extract the population. | No Exceptions Noted\n\n|  | Regodit AI maintains documented information security policies covering access control, data protection, incident management, change management, acceptable use, privacy, and processing integrity. Policies are reviewed and approved by the CEO on at least an annual basis. | We obtained current information security policies and inspected evidence of annual review and approval by the CEO. We verified that policies covered all applicable control domains including processing integrity and privacy. | No Exceptions Noted",
+      "[Regodit AI_SOC2_Type_II_Report_Test.docx]\n, risk register management, and policy lifecycle management across all five trust services criteria.\n\nIntegrity and Ethical Values\n\nAll personnel are required to acknowledge and adhere to the company's information security policies, acceptable use policies, confidentiality agreements, and NDAs as a condition of employment or engagement. Policy acknowledgment is tracked on the GRC platform.\n\nOrganizational Structure\n\nRegodit AI maintains a flat, engineering-led organizational structure comprising the following functional roles:\n\nExecutive Leadership  Prasun Kumar (Founder and CEO) holds overall responsibility for strategic direction, security governance, risk management, compliance posture, and organizational policy.",
+      "[Secure Development Lifecycle Document 01.docx]\no you. If it does not, remove it and/or replace it with your organization\u2019s corresponding practices.\n\nReplace any highlighted text in angled brackets < > with your own language\n\nRewrite the policy language such that it reflects the practices of your organization\n\nPolicy completion checklist\n\nUse Find to make sure that all text in angled brackets is replaced\n\nProofread your policy for spelling and grammar mistakes\n\nConfirm that the policy\u2019s content reflects your organizations practices\n\nAdd any company-specific letterhead, branding, and formatting\n\nRemove this instructions page\n\nExport this document as PDF \u2014 File > Save As > Change \u201cFile Format\u201d to PDF\n\nUpload the PDF to Regodit at https://example.com\n\nMore questions?"
+    ]
+  },
+  "3": {
+    "id": 3,
+    "topic": "Governance",
+    "question": "Does your organization have a public information security policy?",
+    "status": "verified",
+    "answer": "The evidence does not clearly answer the question.",
+    "sources": [
+      "Regodit_information_security_policy_v1.0.docx",
+      "Secure Development Lifecycle Document 01.docx"
+    ],
+    "confidence": 0.5,
+    "evidence": [
+      "[Regodit_information_security_policy_v1.0.docx]\nReview Cycle | Annual, or upon material change to systems, regulations, or organizational structure\n\nApplies To | All employees, contractors, interns, and third parties with access to company or client systems/data\n\nVersion | Date | Author | Description of Change\n\n1.0 | 14-07-2026 | Sahil Pugalia | Initial policy\n\nRole | Name | Date\n\nChief Business Officer / Chief Privacy Officer | Priyanka Choudhury |",
+      "[Secure Development Lifecycle Document 01.docx]\no you. If it does not, remove it and/or replace it with your organization\u2019s corresponding practices.\n\nReplace any highlighted text in angled brackets < > with your own language\n\nRewrite the policy language such that it reflects the practices of your organization\n\nPolicy completion checklist\n\nUse Find to make sure that all text in angled brackets is replaced\n\nProofread your policy for spelling and grammar mistakes\n\nConfirm that the policy\u2019s content reflects your organizations practices\n\nAdd any company-specific letterhead, branding, and formatting\n\nRemove this instructions page\n\nExport this document as PDF \u2014 File > Save As > Change \u201cFile Format\u201d to PDF\n\nUpload the PDF to Regodit at https://example.com\n\nMore questions?"
+    ]
+  },
+  "4": {
+    "id": 4,
+    "topic": "Governance",
+    "question": "Does your organization document role descriptions including relevant cybersecurity & data protection responsibilities?",
+    "status": "verified",
+    "answer": "Yes. The evidence explicitly states that the organization documents role descriptions including relevant cybersecurity and data protection responsibilities. Specifically, [BCP_DR_Plan_Solsphere.docx] details role descriptions with cybersecurity and data protection responsibilities, such as:  \n- The \"Security & Compliance Lead\" role ensures security controls align with SOC 2 and HIPAA (data protection standards).  \n- The \"IT Lead\" role manages backups and verifies data integrity.  \n\nAdditionally, [Regodit_hr_policy_v1.0.docx] confirms the organization maintains an official and updated organizational structure that \"clearly defines reporting lines, departmental responsibilities, and individual role descriptions,\" with biannual reviews and mandatory updates for structural changes. This evidence directly addresses the question without ambiguity.",
+    "sources": [
+      "BCP_DR_Plan_Solsphere.docx",
+      "Regodit_hr_policy_v1.0.docx"
+    ],
+    "confidence": 2.08,
+    "evidence": [
+      "[BCP_DR_Plan_Solsphere.docx]\nill help maintain accuracy and relevance for your specific operational needs.\n\nRole | Responsibility\n\nBCP/DR Coordinator (CTO / Co-Founder) | Owns the BCP/DR plan, leads the recovery process, and coordinates efforts with all relevant stakeholders.\n\nIT Lead | Responsible for restoring systems, managing backups, and verifying the integrity of data throughout the recovery process.\n\nSecurity & Compliance Lead | Ensures that all security controls and evidentiary documentation align with SOC 2 and HIPAA requirements.\n\nCEO / Founder | Approves the activation of the plan and handles external communications as necessary.\n\nAll Employees | Adhere to internal communication and escalation procedures as outlined in the plan.\n\nType of Threat | Example | Impact | Mitigation / Control",
+      "[Regodit_hr_policy_v1.0.docx]\nl obligations. Both roles collaborate to promote a secure and legally compliant working environment.\n\nTo maintain clarity and reduce ambiguity, the organization ensures that an official and updated organizational structure is maintained. This structure clearly defines reporting lines, departmental responsibilities, and individual role descriptions. The organizational chart is reviewed biannually, with mandatory updates following significant staffing or structural changes.\n\n3. Recruitment and Hiring Procedures",
+      "[BCP_DR_Plan_Solsphere.docx]\nrmation, including personally identifiable information (PII) and protected health information (PHI).\n\nFacilitate effective communication with employees, customers, and partners during an incident.\n\n4. Roles and Responsibilities\n\n5. Risk & Impact Assessment\n\n6. Recovery Objectives\n\nInstructions for Use:\n\nThis template has been pre-filled with suggested responses in each section to help guide you through the completion process. Please carefully review the content provided and update or modify each section as necessary to ensure it aligns with your organization\u2019s unique business processes, roles and requirements. Customizing the information will help maintain accuracy and relevance for your specific operational needs.\n\nRole | Responsibility"
+    ]
+  }
+}

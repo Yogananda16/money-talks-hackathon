@@ -39,7 +39,7 @@ def build_search_query(topic, question_text):
     return f"{topic}: {question_text}" if topic else question_text
 
 
-def hybrid_search(query, k=15):
+def hybrid_search(query, k=30, final_k=20, bm25_weight=2.0):
     q_emb = embedder.encode([query], normalize_embeddings=True).tolist()
     dense_hits = collection.query(query_embeddings=q_emb, n_results=k)["ids"][0]
     bm25_scores = bm25.get_scores(query.lower().split())
@@ -49,8 +49,8 @@ def hybrid_search(query, k=15):
     for rank, doc_id in enumerate(dense_hits):
         scores[doc_id] = scores.get(doc_id, 0) + 1 / (60 + rank)
     for rank, doc_id in enumerate(sparse_hits):
-        scores[doc_id] = scores.get(doc_id, 0) + 1 / (60 + rank)
-    top_ids = sorted(scores, key=scores.get, reverse=True)[:k]
+        scores[doc_id] = scores.get(doc_id, 0) + bm25_weight * (1 / (60 + rank))
+    top_ids = sorted(scores, key=scores.get, reverse=True)[:final_k]
     return [id_to_text[i] for i in top_ids]
 
 
@@ -83,7 +83,7 @@ def answer_question(question_id, topic, question_text):
         }
 
     search_query = build_search_query(topic, question_text)
-    candidates = hybrid_search(search_query, k=15)
+    candidates = hybrid_search(search_query)
     evidence = rerank(search_query, candidates)
 
     if not evidence:
